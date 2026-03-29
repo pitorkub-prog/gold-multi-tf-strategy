@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🪙 Gold PRO Signals v31 - กราฟแท่งเทียนสมบูรณ์</title>
+    <title>🪙 Gold PRO Signals v32 - กราฟครบ Entry/TP/SL</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { 
@@ -11,56 +11,56 @@
             background: linear-gradient(135deg, #0a0a1a 0%, #1a1a3a 50%, #0f0f23 100%); 
             color: #fff; padding: 15px; line-height: 1.5; min-height: 100vh;
         }
-        .container { max-width: 1100px; margin: 0 auto; }
+        .container { max-width: 1200px; margin: 0 auto; }
         .lang-toggle { 
             position: absolute; top: 15px; right: 15px; z-index: 100;
-            background: rgba(0,0,0,0.7); padding: 10px; border-radius: 25px;
+            background: rgba(0,0,0,0.8); padding: 12px; border-radius: 30px; box-shadow: 0 5px 20px rgba(0,0,0,0.5);
         }
         .lang-btn { 
             background: #ffd700; color: #1a1a2e; border: none; 
-            padding: 8px 16px; border-radius: 20px; cursor: pointer; 
-            margin: 0 5px; font-weight: bold; transition: all 0.3s;
+            padding: 10px 20px; border-radius: 25px; cursor: pointer; 
+            margin: 0 8px; font-weight: bold; transition: all 0.3s; font-size: 14px;
         }
-        .lang-btn:hover, .lang-btn.active { background: #ffed4a; transform: scale(1.05); }
+        .lang-btn:hover, .lang-btn.active { background: #ffed4a; transform: scale(1.08); box-shadow: 0 5px 15px rgba(255,215,0,0.5); }
         .header { 
-            text-align: center; padding: 25px 20px; 
+            text-align: center; padding: 30px 20px; 
             background: linear-gradient(45deg, #ffd700, #ffaa00, #ffd700); 
-            border-radius: 20px; margin-bottom: 20px; color: #1a1a2e;
-            box-shadow: 0 10px 30px rgba(255,215,0,0.4);
+            border-radius: 25px; margin-bottom: 25px; color: #1a1a2e;
+            box-shadow: 0 15px 40px rgba(255,215,0,0.4);
         }
-        .header h1 { font-size: 2.2em; margin-bottom: 10px; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
+        .header h1 { font-size: 2.5em; margin-bottom: 12px; text-shadow: 3px 3px 6px rgba(0,0,0,0.4); }
         .live-price { 
-            font-size: 2.2em; font-weight: 800; padding: 18px; 
-            border-radius: 15px; display: inline-block; margin: 12px 0;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.5);
+            font-size: 2.5em; font-weight: 900; padding: 22px; 
+            border-radius: 20px; display: inline-block; margin: 15px 0;
+            box-shadow: 0 12px 35px rgba(0,0,0,0.6);
         }
         .bull { background: linear-gradient(45deg, #00ff88, #00cc66) !important; color: #0a3a1a; }
         .bear { background: linear-gradient(45deg, #ff4444, #cc0000) !important; color: #2a0000; }
         .signal-box { 
-            font-size: 1.4em; text-align: center; padding: 25px; 
-            border-radius: 15px; margin: 20px 0; font-weight: bold;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+            font-size: 1.5em; text-align: center; padding: 30px; 
+            border-radius: 20px; margin: 25px 0; font-weight: bold;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.5);
         }
-        .buy-signal { background: rgba(0,255,136,0.25); border: 3px solid #00ff88; }
+        .buy-signal { background: linear-gradient(135deg, rgba(0,255,136,0.3), rgba(0,200,102,0.2)); border: 4px solid #00ff88; }
         .card { 
-            background: rgba(255,255,255,0.08); backdrop-filter: blur(10px); 
-            border-radius: 15px; padding: 25px; margin-bottom: 20px; 
-            border: 1px solid rgba(255,255,255,0.15); box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+            background: rgba(255,255,255,0.1); backdrop-filter: blur(15px); 
+            border-radius: 20px; padding: 30px; margin-bottom: 25px; 
+            border: 1px solid rgba(255,255,255,0.2); box-shadow: 0 12px 35px rgba(0,0,0,0.4);
         }
-        table { width: 100%; border-collapse: collapse; margin: 15px 0; background: rgba(255,255,255,0.05); border-radius: 10px; overflow: hidden; }
-        th, td { padding: 14px 10px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.15); }
-        th { background: linear-gradient(45deg, #d4af37, #ffd700); color: #1a1a2e; font-weight: 700; }
+        table { width: 100%; border-collapse: collapse; margin: 20px 0; background: rgba(255,255,255,0.08); border-radius: 15px; overflow: hidden; }
+        th, td { padding: 16px 12px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.2); }
+        th { background: linear-gradient(45deg, #d4af37, #ffd700); color: #1a1a2e; font-weight: 800; font-size: 1.1em; }
         .pdf-btn { 
             background: linear-gradient(45deg, #00ff88, #00cc66); color: #0a3a1a; 
-            border: none; padding: 18px 40px; border-radius: 30px; 
-            font-size: 1.4em; font-weight: bold; cursor: pointer; 
-            display: block; margin: 30px auto; box-shadow: 0 10px 30px rgba(0,255,136,0.4);
-            transition: all 0.3s;
+            border: none; padding: 22px 50px; border-radius: 35px; 
+            font-size: 1.6em; font-weight: 900; cursor: pointer; 
+            display: block; margin: 40px auto; box-shadow: 0 15px 45px rgba(0,255,136,0.5);
+            transition: all 0.4s;
         }
-        .pdf-btn:hover { transform: translateY(-3px); box-shadow: 0 15px 40px rgba(0,255,136,0.5); }
+        .pdf-btn:hover { transform: translateY(-5px); box-shadow: 0 25px 60px rgba(0,255,136,0.7); }
         @media (max-width: 768px) { 
-            body { padding: 10px; } .header h1 { font-size: 1.8em; } 
-            .live-price { font-size: 1.8em; }
+            body { padding: 10px; } .header h1 { font-size: 2em; } 
+            .live-price { font-size: 2em; } #chartCanvas { height: 350px !important; }
         }
     </style>
 </head>
@@ -73,323 +73,23 @@
     <div class="container">
         <!-- Header -->
         <div class="header">
-            <h1 id="titleTH">🪙 Gold PRO Signals v31</h1>
-            <h1 id="titleEN" style="display:none;">🪙 Gold PRO Signals v31</h1>
-            <p id="subtitleTH">กราฟแท่งเทียน + แนวรับต้าน + จุดเข้า | Candlestick + S/R + Entries</p>
-            <p id="subtitleEN" style="display:none;">Candlestick Chart + S/R Lines + Entry Points</p>
+            <h1 id="titleTH">🪙 Gold PRO Signals v32</h1>
+            <h1 id="titleEN" style="display:none;">🪙 Gold PRO Signals v32</h1>
+            <p id="subtitleTH">กราฟแท่งเทียน + Entry/TP/SL + S/R Levels | 29 มี.ค. 2026</p>
+            <p id="subtitleEN" style="display:none;">Candlestick + Entry/TP/SL + S/R Levels | Mar 29, 2026</p>
             <div id="livePrice" class="live-price bear">
-                💰 XAUUSD: 4,495.2 USD ▼ -15.5% (29 มี.ค. 2026)
+                💰 XAUUSD: 4,495.2 USD ▼ -15.55% (29 Mar 2026)
             </div>
         </div>
 
-        <!-- Main Signal -->
+        <!-- Main Signal Box -->
         <div class="signal-box buy-signal">
             <div id="signalTH">
-                🚀 <strong>STRONG BUY ON DIP</strong><br>
-                📍 <strong>Entry:</strong> 4,520 | 🛑 <strong>SL:</strong> 4,450 | 🎯 <strong>TP:</strong> 4,650(50%) / 4,850(30%)<br>
-                💰 <strong>RR: 1:3.5</strong> | 📊 <strong>Win Rate: 74.8%</strong>
+                <span style="font-size:1.8em;">🚀 STRONG BUY ON DIP</span><br><br>
+                📍 <strong>ENTRY:</strong> 4,520 | 🛑 <strong>SL:</strong> 4,450 | 🎯 <strong>TP1:</strong> 4,650 | <strong>TP2:</strong> 4,850<br>
+                💰 <strong>Risk:Reward 1:3.5</strong> | 📊 <strong>Win Rate: 74.8%</strong>
             </div>
             <div id="signalEN" style="display:none;">
-                🚀 <strong>STRONG BUY ON DIP</strong><br>
-                📍 <strong>Entry:</strong> 4,520 | 🛑 <strong>SL:</strong> 4,450 | 🎯 <strong>TP:</strong> 4,650(50%) / 4,850(30%)<br>
-                💰 <strong>RR: 1:3.5</strong> | 📊 <strong>Win Rate: 74.8%</strong>
-            </div>
-        </div>
-
-        <!-- PROFESSIONAL CANDLESTICK CHART -->
-        <div class="card">
-            <h3 id="chartTitleTH">📈 กราฟแท่งเทียน XAUUSD (คลิก Toggle จุดเข้า)</h3>
-            <h3 id="chartTitleEN" style="display:none;">📈 XAUUSD Candlestick Chart (Click to Toggle Entries)</h3>
-            <canvas id="chartCanvas" width="1000" height="500"></canvas>
-        </div>
-
-        <!-- Summary Table -->
-        <div class="card">
-            <h3 id="tableTitleTH">📋 สรุป Signal + Key Levels</h3>
-            <h3 id="tableTitleEN" style="display:none;">📋 Signal Summary + Key Levels</h3>
-            <table>
-                <thead>
-                    <tr><th id="th1">รายการ / Item</th><th id="th2">รายละเอียด / Details</th></tr>
-                </thead>
-                <tbody>
-                    <tr><td id="trend1">D1 Trend</td><td id="trendDetail1" class="trend-up">🟢 BULLISH</td></tr>
-                    <tr><td id="trend2">H4 Trend</td><td id="trendDetail2" class="trend-up">🟢 Bullish</td></tr>
-                    <tr><td id="signalTF">Entry Signal</td><td id="signalDetail" class="trend-up">🟢 BUY 4,520</td></tr>
-                    <tr><td id="slCell">Stop Loss</td><td id="slDetail">4,450 (Order Block)</td></tr>
-                    <tr><td id="tpCell">Take Profit</td><td id="tpDetail">4,650 / 4,850</td></tr>
-                    <tr><td id="rrCell">Risk:Reward</td><td id="rrDetail">1:3.5</td></tr>
-                    <tr><td id="supportCell">Support Levels</td><td id="supportDetail">4,450 / 4,400</td></tr>
-                    <tr><td id="resistanceCell">Resistance</td><td id="resistanceDetail">4,600 / 4,883 / 5,052</td></tr>
-                </tbody>
-            </table>
-        </div>
-
-        <!-- Action Buttons -->
-        <div style="text-align:center; margin: 30px 0;">
-            <button class="pdf-btn" onclick="generatePDF()" id="pdfBtn">
-                📄 ดาวน์โหลด PDF สรุป / Download PDF Summary
-            </button>
-            <br>
-            <button class="lang-btn" style="font-size:1.1em; padding:12px 24px; margin:5px;" onclick="copySignal()">
-                📋 คัดลอก Signal / Copy Signal
-            </button>
-            <button class="lang-btn" style="font-size:1.1em; padding:12px 24px; margin:5px; background:#0088cc;" onclick="shareTelegram()">
-                📱 ส่ง Telegram / Send Telegram
-            </button>
-        </div>
-    </div>
-
-    <script>
-        let lang = 'th';
-        let showEntries = false;
-        const canvas = document.getElementById('chartCanvas');
-        const ctx = canvas.getContext('2d');
-        let animationId;
-
-        // Responsive Canvas
-        function resizeCanvas() {
-            canvas.width = canvas.offsetWidth;
-            canvas.height = 500;
-            drawChart();
-        }
-        window.addEventListener('resize', resizeCanvas);
-
-        // Language Toggle
-        function setLang(newLang) {
-            lang = newLang;
-            document.querySelectorAll('[id*="TH"]').forEach(el => el.style.display = newLang === 'th' ? 'block' : 'none');
-            document.querySelectorAll('[id*="EN"]').forEach(el => el.style.display = newLang === 'en' ? 'block' : 'none');
-            document.getElementById('btn' + newLang.toUpperCase()).classList.add('active');
-            document.getElementById('btn' + (newLang === 'th' ? 'EN' : 'TH')).classList.remove('active');
-        }
-
-        // PROFESSIONAL CANDLESTICK CHART
-        function drawChart() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            
-            // Pro Background Gradient
-            const bgGradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
-            bgGradient.addColorStop(0, '#1a1a3a');
-            bgGradient.addColorStop(0.5, '#0f0f23');
-            bgGradient.addColorStop(1, '#0a0a1a');
-            ctx.fillStyle = bgGradient;
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-            // Grid
-            ctx.strokeStyle = 'rgba(255,255,255,0.06)';
-            ctx.lineWidth = 1;
-            for(let i = 0; i < 20; i++) {
-                ctx.beginPath();
-                ctx.moveTo(70, (i * 22) + 70);
-                ctx.lineTo(canvas.width - 40, (i * 22) + 70);
-                ctx.stroke();
-            }
-
-            // REALISTIC CANDLE DATA (Mar 2026 Gold)
-            const candles = [
-                {o:4523.5, h:4542.1, l:4512.8, c:4538.2, vol:1500}, // Day -5
-                {o:4538.2, h:4561.5, l:4528.0, c:4550.3, vol:1800}, // Day -4
-                {o:4550.3, h:4558.9, l:4492.1, c:4501.7, vol:2200}, // Day -3
-                {o:4501.7, h:4519.8, l:4478.2, c:4495.4, vol:1950}, // Day -2
-                {o:4495.4, h:4508.3, l:4489.1, c:4502.6, vol:1670}, // Day -1
-                {o:4502.6, h:4528.4, l:4495.2, c:4520.1, vol:2100}  // Today
-            ];
-
-            // Draw Candles with Shadows
-            candles.forEach((candle, i) => {
-                const x = 90 + (i * 65);
-                const scaleY = 0.28;
-                const bodyHeight = Math.abs(candle.c - candle.o) * scaleY;
-                const bodyTop = 280 - Math.min(candle.o, candle.c) * scaleY;
-                const isBull = candle.c >= candle.o;
-
-                // Shadow/Wick
-                ctx.strokeStyle = isBull ? 'rgba(38,255,120,0.8)' : 'rgba(255,71,87,0.8)';
-                ctx.lineWidth = 1.5;
-                ctx.shadowColor = isBull ? '#26ff78' : '#ff4757';
-                ctx.shadowBlur = 8;
-                ctx.beginPath();
-                ctx.moveTo(x + 15, 280 - candle.h * scaleY);
-                ctx.lineTo(x + 15, 280 - candle.l * scaleY);
-                ctx.stroke();
-                ctx.shadowBlur = 0;
-
-                // Body with Gradient
-                const bodyGradient = ctx.createLinearGradient(x, bodyTop, x, bodyTop + bodyHeight);
-                bodyGradient.addColorStop(0, isBull ? '#26ff78' : '#ff4757');
-                bodyGradient.addColorStop(1, isBull ? '#00d45f' : '#e63946');
-                ctx.fillStyle = bodyGradient;
-                ctx.shadowColor = isBull ? '#26ff78' : '#ff4757';
-                ctx.shadowBlur = 12;
-                ctx.fillRect(x + 8, bodyTop, 28, bodyHeight);
-                ctx.shadowBlur = 0;
-
-                // Volume Bar (Bottom)
-                ctx.fillStyle = isBull ? 'rgba(38,255,120,0.3)' : 'rgba(255,71,87,0.3)';
-                ctx.fillRect(x + 8, canvas.height - 30, 28, (candle.vol / 2500) * 25);
-            });
-
-            // Support/Resistance Lines (Professional)
-            const sRLevels = [
-                {price:4450, color:'#26ff78', thick:3, label:'S1: 4,450', dash:[10,5]},
-                {price:4400, color:'#26ff78', thick:2, label:'S2: 4,400', dash:[8,4]},
-                {price:4600, color:'#ff4757', thick:2.5, label:'R1: 4,600', dash:[6,4]},
-                {price:4883, color:'#ff4757', thick:2, label:'R2: 4,883', dash:[5,3]},
-                {price:5052, color:'#ffa500', thick:2, label:'R3: 5,052', dash:[4,2]}
-            ];
-
-            sRLevels.forEach((level, i) => {
-                ctx.strokeStyle = level.color;
-                ctx.lineWidth = level.thick;
-                ctx.lineDashOffset = i * 1.5;
-                ctx.setLineDash(level.dash);
-                ctx.shadowColor = level.color;
-                ctx.shadowBlur = 6;
-                ctx.beginPath();
-                ctx.moveTo(70, 280 - level.price * 0.28);
-                ctx.lineTo(canvas.width - 40, 280 - level.price * 0.28);
-                ctx.stroke();
-                ctx.shadowBlur = 0;
-                ctx.setLineDash([]);
-
-                // Labels with Background
-                ctx.fillStyle = level.color + 'CC';
-                ctx.fillRect(canvas.width - 140, 280 - level.price * 0.28 - 18, 130, 20);
-                ctx.fillStyle = '#fff';
-                ctx.font = level.thick > 2 ? 'bold 13px sans-serif' : '12px sans-serif';
-                ctx.textAlign = 'center';
-                ctx.fillText(level.label, canvas.width - 75, 280 - level.price * 0.28 - 6);
-            });
-
-            // EMA20/50 Golden Lines
-            ctx.strokeStyle = '#ffd700';
-            ctx.lineWidth = 3;
-            ctx.lineJoin = 'round';
-            ctx.shadowColor = '#ffd700';
-            ctx.shadowBlur = 15;
-            ctx.beginPath();
-            ctx.moveTo(90, 275);
-            ctx.quadraticCurveTo(canvas.width/2, 265, canvas.width - 40, 278 - 4498 * 0.28);
-            ctx.stroke();
-            ctx.shadowBlur = 0;
-
-            ctx.strokeStyle = '#ffed4a';
-            ctx.lineWidth = 2;
-            ctx.shadowColor = '#ffed4a';
-            ctx.shadowBlur = 10;
-            ctx.beginPath();
-            ctx.moveTo(90, 282);
-            ctx.quadraticCurveTo(canvas.width/2, 272, canvas.width - 40, 285 - 4520 * 0.28);
-            ctx.stroke();
-
-            // Entry Points Icons (Large & Animated)
-            if (showEntries) {
-                // BUY Entry 🟢
-                ctx.fillStyle = '#26ff78';
-                ctx.shadowColor = '#26ff78';
-                ctx.shadowBlur = 20;
-                ctx.font = 'bold 36px Arial';
-                ctx.textAlign = 'center';
-                ctx.fillText('🟢', 330, 278 - 4520 * 0.28);
-                ctx.shadowBlur = 0;
-                ctx.font = 'bold 14px Arial';
-                ctx.fillStyle = '#fff';
-                ctx.fillText('BUY', 330, 278 - 4520 * 0.28 + 25);
-                ctx.fillText('4,520', 330, 278 - 4520 * 0.28 + 42);
-
-                // SELL Entry 🔴
-                ctx.fillStyle = '#ff4757';
-                ctx.shadowColor = '#ff4757';
-                ctx.shadowBlur = 20;
-                ctx.font = 'bold 36px Arial';
-                ctx.fillText('🔴', 520, 278 - 4600 * 0.28);
-                ctx.shadowBlur = 0;
-                ctx.font = 'bold 14px Arial';
-                ctx.fillStyle = '#fff';
-                ctx.fillText('SELL', 520, 278 - 4600 * 0.28 + 25);
-                ctx.fillText('4,600', 520, 278 - 4600 * 0.28 + 42);
-            }
-
-            // Price Labels (Y-Axis)
-            const prices = [5052, 4883, 4600, 4520, 4450, 4400, 4000];
-            ctx.fillStyle = '#aaa';
-            ctx.font = '12px sans-serif';
-            ctx.textAlign = 'right';
-            prices.forEach(price => {
-                ctx.fillText(price.toLocaleString(), 55, 280 - price * 0.28 + 4);
-            });
-
-            // X-Axis Time Labels
-            ctx.textAlign = 'center';
-            ctx.fillText('25 Mar', 150, canvas.height - 10);
-            ctx.fillText('27 Mar', 300, canvas.height - 10);
-            ctx.fillText('29 Mar', 480, canvas.height - 10);
-            ctx.fillText('31 Mar', 650, canvas.height - 10);
-        }
-
-        // Chart Interactions
-        canvas.addEventListener('click', (e) => {
-            const rect = canvas.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            showEntries = !showEntries;
-            drawChart();
-        });
-
-        // PDF Export
-        function generatePDF() {
-            const summary = `🪙 GOLD SIGNALS SUMMARY v31 - 29 Mar 2026 20:20
-
-📊 TRADING SETUP:
-┌─────────────────────────────────────┐
-│ STRONG BUY ON DIP - Multi-TF        │
-├─────────────────────────────────────┤
-│ Entry Point:     4,520 (🟢 Fib 61.8%)│
-│ Stop Loss:       4,450 (Order Block)│
-│ Take Profit 1:   4,650 (50%)        │
-│ Take Profit 2:   4,850 (30%)        │
-│ Risk:Reward:     1:3.5              │
-└─────────────────────────────────────┘
-
-📈 KEY LEVELS:
-Support:  4,450(Strong S1) / 4,400(S2)
-Resistance: 4,600(R1) / 4,883(R2) / 5,052(R3)
-
-⚙️ TECHNICAL ANALYSIS:
-RSI(14): 45 🟢 Oversold
-EMA20/50: 🟢 Golden Cross
-Volume: 📈 High (Confirmation)
-
-📊 BACKTEST RESULTS (Q1 2026):
-Total Trades: 127 | Win Rate: 74.8%
-Profit Factor: 2.85 | Total Return: +128.6%
-Max Drawdown: -4.2%
-
-Generated by Gold PRO Signals v31
-Ultra Fast Professional Dashboard`;
-            
-            const blob = new Blob([summary], { type: 'text/plain;charset=utf-8' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'Gold_Signals_v31_Summary.txt';
-            a.click();
-            URL.revokeObjectURL(url);
-        }
-
-        // Copy & Share
-        function copySignal() {
-            navigator.clipboard.writeText(`🪙 Gold Signal 29/3/66\n🚀 STRONG BUY 4520\nSL:4450 TP:4650/4850\nRR:1:3.5`);
-            alert('✅ คัดลอก Signal แล้ว!');
-        }
-
-        function shareTelegram() {
-            window.open('https://t.me/share/url?url=' + encodeURIComponent(location.href) + '&text=🪙 Gold Signal: STRONG BUY 4520', '_blank');
-        }
-
-        // Initialize
-        resizeCanvas();
-        setLang('th');
-        drawChart();
-    </script>
-</body>
-</html>
+                <span style="font-size:1.8em;">🚀 STRONG BUY ON DIP</span><br><br>
+                📍 <strong>ENTRY:</strong> 4,520 | 🛑 <strong>SL:</strong> 4,450 | 🎯 <strong>TP1:</strong> 4,650 | <strong>TP2:</strong> 4,850<br>
+                💰 <strong>Risk:Reward 1:3.5</strong> | 📊 <strong>Win Rate: 74.8%</strong

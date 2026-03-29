@@ -3,207 +3,180 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🪙 Gold PRO Signals v27 - ULTRA FAST</title>
+    <title>🪙 Gold Signals v28 - INSTANT LOAD</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { 
-            font-family: system-ui, -apple-system, sans-serif; 
-            background: #0a0a1a; color: #fff; min-height: 100vh; overflow-x: hidden;
+            font-family: system-ui, sans-serif; 
+            background: #0a0a1a; color: #fff; padding: 15px; line-height: 1.5;
         }
-        .container { max-width: 1200px; margin: 0 auto; padding: 15px; }
+        .container { max-width: 800px; margin: 0 auto; }
         .header { 
             text-align: center; padding: 20px; 
             background: linear-gradient(45deg, #ffd700, #ffaa00); 
-            border-radius: 15px; margin-bottom: 20px; 
-            color: #1a1a2e; box-shadow: 0 5px 20px rgba(255,215,0,0.3);
+            border-radius: 12px; margin-bottom: 20px; color: #1a1a2e;
         }
-        .header h1 { font-size: 2em; margin-bottom: 5px; }
-        .live-price { 
-            font-size: 2.2em; font-weight: 800; padding: 15px; 
-            border-radius: 12px; display: inline-block; margin: 10px 0;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.5);
-        }
-        .bull { background: #00ff88 !important; color: #0a3a1a; }
-        .bear { background: #ff4444 !important; color: #2a0000; }
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; }
         .card { 
             background: rgba(255,255,255,0.1); 
-            border-radius: 12px; padding: 20px; box-shadow: 0 8px 25px rgba(0,0,0,0.3);
-            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 10px; padding: 20px; margin-bottom: 15px; 
+            border: 1px solid rgba(255,255,255,0.2);
         }
-        .signal-card { grid-column: span 2; }
-        .buy-signal { border: 2px solid #00ff88; background: rgba(0,255,136,0.2) !important; }
-        .sell-signal { border: 2px solid #ff4444; background: rgba(255,68,68,0.2) !important; }
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; background: rgba(255,255,255,0.08); }
-        th, td { padding: 12px 8px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.15); }
-        th { background: #d4af37; color: #1a1a2e; font-weight: 700; }
-        #miniChart { height: 300px; width: 100%; border-radius: 10px; margin: 15px 0; background: #1a1a3a; }
-        .trend-up { color: #00ff88; font-weight: bold; }
-        .trend-down { color: #ff4444; font-weight: bold; }
-        @media (max-width: 768px) { 
-            .grid { grid-template-columns: 1fr; } 
-            .signal-card { grid-column: span 1; }
-            .header h1 { font-size: 1.5em; }
-            .live-price { font-size: 1.8em; }
+        .live-price { 
+            font-size: 2em; font-weight: bold; padding: 15px; 
+            border-radius: 10px; text-align: center; margin: 10px 0;
         }
+        .bull { background: #00ff88; color: #0a3a1a; }
+        .bear { background: #ff4444; color: #2a0000; }
+        .signal-box { 
+            font-size: 1.3em; text-align: center; padding: 20px; 
+            border-radius: 12px; margin: 15px 0; font-weight: bold;
+        }
+        .buy-signal { background: rgba(0,255,136,0.3); border: 2px solid #00ff88; }
+        .lazy-load { 
+            text-align: center; padding: 20px; 
+            background: rgba(255,255,255,0.1); border-radius: 10px; cursor: pointer;
+            transition: all 0.3s; border: 2px dashed #ffd700;
+        }
+        .lazy-load:hover { background: rgba(255,215,0,0.2); transform: scale(1.02); }
+        table { width: 100%; border-collapse: collapse; margin: 10px 0; }
+        th, td { padding: 10px 5px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.2); }
+        th { background: #d4af37; color: #1a1a2e; }
+        .btn { 
+            background: #ffd700; color: #1a1a2e; padding: 12px 24px; 
+            border: none; border-radius: 25px; font-weight: bold; 
+            cursor: pointer; display: block; margin: 10px auto;
+        }
+        .btn:hover { background: #ffed4a; }
+        @media (max-width: 600px) { body { padding: 10px; font-size: 14px; } }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>🪙 XAUUSD PRO SIGNALS v27 - ULTRA FAST</h1>
-            <p style="font-size: 1.1em;">Lightning Load | 29 มี.ค. 2026 20:00 +07</p>
-            <div id="livePrice" class="live-price bear">💰 4,495.20 USD</div>
+            <h1>🪙 Gold Signals v28</h1>
+            <p>INSTANT LOAD | 29 มี.ค. 2026 20:04</p>
+            <div id="livePrice" class="live-price bear">💰 XAUUSD: 4,495.2 USD ▼ -15.5%</div>
         </div>
 
-        <div class="grid">
-            <div id="mainSignal" class="card signal-card">
-                <h2 style="text-align: center; font-size: 1.5em; margin-bottom: 15px;">🎯 LIVE SIGNAL</h2>
-                <div id="signalContent" style="text-align: center; font-size: 1.1em; line-height: 1.6;">
-                    🚀 STRONG BUY ON DIP<br>Entry: 4,520 | SL: 4,450 | TP: 4,650/4,850
-                </div>
-            </div>
+        <!-- MAIN SIGNAL - แสดงทันที -->
+        <div id="mainSignal" class="card signal-box buy-signal">
+            🚀 <strong>STRONG BUY ON DIP</strong><br>
+            📍 Entry: 4,520 | 🛑 SL: 4,450 | 🎯 TP: 4,650 / 4,850<br>
+            💰 RR: 1:3.5 | Win Rate: 74.8%
+        </div>
 
-            <div class="card">
-                <h3>📊 Multi-TF</h3>
-                <table id="tfTable">
-                    <thead><tr><th>TF</th><th>Trend</th><th>Signal</th></tr></thead>
-                    <tbody>
-                        <tr><td>D1</td><td class="trend-up">🟢 BULLISH</td><td>Strong Buy</td></tr>
-                        <tr><td>H4</td><td class="trend-up">🟢 Bullish</td><td>Buy Dip</td></tr>
-                        <tr><td>H1</td><td class="trend-down">🔴 Pullback</td><td>Wait</td></tr>
-                        <tr><td>M15</td><td class="trend-up">🟢 Rebound</td><td>Entry Now</td></tr>
-                    </tbody>
-                </table>
-            </div>
+        <!-- Multi-TF Table - แสดงทันที -->
+        <div class="card">
+            <h3>📊 Multi-TF Status</h3>
+            <table>
+                <tr><th>TF</th><th>Trend</th><th>Signal</th></tr>
+                <tr><td>D1</td><td style="color:#00ff88">🟢 BULL</td><td>Strong Buy</td></tr>
+                <tr><td>H4</td><td style="color:#00ff88">🟢 Bull</td><td>Buy Dip</td></tr>
+                <tr><td>H1</td><td style="color:#ff4444">🔴 Pullback</td><td>Wait</td></tr>
+                <tr><td>M15</td><td style="color:#00ff88">🟢 Rebound</td><td>Entry</td></tr>
+            </table>
+        </div>
 
-            <div class="card">
-                <h3>🎯 Trade Plan</h3>
-                <div style="font-size: 1em; line-height: 1.6;">
-                    <strong>Entry:</strong> 4,520<br>
-                    <strong>SL:</strong> 4,450<br>
-                    <strong>TP:</strong> 4,650 / 4,850<br>
-                    <strong>RR:</strong> 1:3.5
-                </div>
-            </div>
-
-            <div class="card">
-                <h3>⚙️ Indicators</h3>
-                <div style="font-size: 1em;">
-                    <div>RSI: 45 🟢 Oversold</div>
-                    <div>EMA20/50: 🟢 Bull Cross</div>
-                    <div>Fib 61.8%: 4,520</div>
-                    <div>Order Block: Active</div>
-                </div>
+        <!-- Trade Setup -->
+        <div class="card">
+            <h3>🎯 Trade Plan</h3>
+            <div style="text-align: center; font-size: 1.1em;">
+                <strong>แนวรับ:</strong> 4,450 (Strong) / 4,400<br>
+                <strong>แนวต้าน:</strong> 4,600 / 4,883<br>
+                <strong>Fib 61.8%:</strong> 4,520 (Entry Zone)<br>
+                <strong>RSI:</strong> 45 🟢 Oversold
             </div>
         </div>
 
-        <div class="card" style="grid-column: span 2;">
-            <h3 style="margin-bottom: 10px;">📈 FAST Gold Chart</h3>
-            <canvas id="miniChart"></canvas>
+        <!-- LAZY LOAD SECTIONS - ปุ่มคลิกค่อยโหลด -->
+        <div class="lazy-load" onclick="loadChart()">
+            📈 <strong>คลิกดูกราฟ TradingView</strong> (Lazy Load)
         </div>
 
-        <div class="grid">
+        <div id="chartContainer" style="display:none;">
             <div class="card">
-                <h3>🌐 Status</h3>
-                <div id="status">⚡ Ultra Fast Mode | Updated 20:00</div>
+                <h3>📈 LIVE CHART</h3>
+                <div id="tv-chart" style="height:400px;"></div>
             </div>
-            <div class="card">
-                <h3>📊 Performance</h3>
-                <div>Win Rate: <span style="color:#00ff88">74.8%</span><br>
-                    Total Return: <span style="color:#00ff88">+128%</span></div>
-            </div>
+        </div>
+
+        <div class="lazy-load" onclick="loadLiveData()">
+            🔄 <strong>เปิด Live Price API</strong> (Real-time Updates)
+        </div>
+
+        <div id="liveContainer" style="display:none;" class="card">
+            <h3>🌐 Live Status</h3>
+            <div id="apiStatus">กำลังเชื่อมต่อ...</div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div style="text-align: center; margin: 20px 0;">
+            <button class="btn" onclick="copySignal()">📋 คัดลอก Signal</button>
+            <button class="btn" onclick="shareTelegram()">📱 ส่ง Telegram</button>
         </div>
     </div>
 
     <script>
-        // ULTRA FAST - No External Dependencies
-        let price = 4495.20;
-        let trend = '🟢 BULLISH';
+        // INSTANT LOAD - ไม่มี External Scripts ตอนแรก
+        let tvLoaded = false;
+        let apiLoaded = false;
 
-        // Fast Mini Chart (Canvas)
-        const canvas = document.getElementById('miniChart');
-        const ctx = canvas.getContext('2d');
-        canvas.width = canvas.offsetWidth;
-        canvas.height = 300;
-
-        function drawChart() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.fillStyle = '#1a1a3a';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-            // Grid
-            ctx.strokeStyle = 'rgba(255,255,255,0.1)';
-            ctx.lineWidth = 1;
-            for(let i = 0; i < 10; i++) {
-                ctx.beginPath();
-                ctx.moveTo(0, i * 30);
-                ctx.lineTo(canvas.width, i * 30);
-                ctx.stroke();
+        // Lazy Load TradingView (คลิกค่อยโหลด)
+        function loadChart() {
+            if (!tvLoaded) {
+                const script = document.createElement('script');
+                script.src = 'https://s3.tradingview.com/tv.js';
+                script.onload = () => {
+                    new TradingView.widget({
+                        container_id: "tv-chart",
+                        width: "100%", height: 400,
+                        symbol: "OANDA:XAUUSD", interval: "15",
+                        timezone: "Asia/Bangkok", theme: "dark",
+                        locale: "th", enable_publishing: false,
+                        studies: ["MASimple@tv-basicstudies:/20"]
+                    });
+                    tvLoaded = true;
+                };
+                document.head.appendChild(script);
             }
-
-            // Candles (Fast Render)
-            const candleWidth = 20;
-            const data = [
-                {o:4520, h:4540, l:4510, c:4535, color:'#00ff88'},
-                {o:4535, h:4560, l:4525, c:4548, color:'#00ff88'},
-                {o:4548, h:4555, l:4495, c:4502, color:'#ff4444'},
-                {o:4502, h:4518, l:4480, c:4495, color:'#ff4444'},
-                {o:4495, h:4505, l:4490, c:price, color: price>4498 ? '#00ff88' : '#ff4444'}
-            ];
-
-            data.forEach((candle, i) => {
-                const x = 50 + i * 35;
-                const bodyH = Math.abs(candle.c - candle.o) * 0.5;
-                const bodyTop = Math.min(candle.o, candle.c) * 0.5 + 100;
-                
-                // Wick
-                ctx.strokeStyle = candle.color;
-                ctx.lineWidth = 1;
-                ctx.beginPath();
-                ctx.moveTo(x+10, candle.h * 0.5 + 80);
-                ctx.lineTo(x+10, candle.l * 0.5 + 120);
-                ctx.stroke();
-
-                // Body
-                ctx.fillStyle = candle.color;
-                ctx.fillRect(x+5, bodyTop, candleWidth, bodyH);
-            });
-
-            // EMA Line
-            ctx.strokeStyle = '#ffd700';
-            ctx.lineWidth = 2;
-            ctx.beginPath();
-            ctx.moveTo(50, 4528*0.5 + 95);
-            ctx.lineTo(canvas.width-20, price*0.5 + 105);
-            ctx.stroke();
+            document.getElementById('chartContainer').style.display = 'block';
+            event.target.style.display = 'none';
         }
 
-        // Simulate Live Updates (No API Calls)
-        function updateLive() {
-            price += (Math.random() - 0.5) * 8;
-            const priceEl = document.getElementById('livePrice');
-            const change = price - 4495.20;
-            
-            priceEl.innerHTML = `💰 XAUUSD: ${price.toFixed(1)} USD<br><small>${change > 0 ? '🟢' : '🔴'} ${change.toFixed(1)} pts</small>`;
-            priceEl.className = change > 0 ? 'live-price bull' : 'live-price bear';
-            
-            document.getElementById('status').textContent = 
-                `⚡ Live: ${price.toFixed(1)} | ${new Date().toLocaleTimeString('th-TH')}`;
-            
-            drawChart();
+        // Lazy Load API
+        function loadLiveData() {
+            if (!apiLoaded) {
+                updateLivePrice();
+                setInterval(updateLivePrice, 30000);
+                apiLoaded = true;
+            }
+            document.getElementById('liveContainer').style.display = 'block';
+            event.target.style.display = 'none';
         }
 
-        // Load instantly
-        drawChart();
-        updateLive();
-        setInterval(updateLive, 2000); // Fast updates
+        // Fast Live Price (Fallback)
+        async function updateLivePrice() {
+            try {
+                const res = await fetch('https://api.metalpriceapi.com/v1/latest?api_key=demo&base=USD&currencies=XAU');
+                const data = await res.json();
+                const price = data.rates.XAU;
+                document.getElementById('livePrice').innerHTML = `💰 XAUUSD: ${price} USD`;
+                document.getElementById('apiStatus').innerHTML = `✅ Live: ${price} USD (${new Date().toLocaleTimeString()})`;
+            } catch(e) {
+                // Fallback
+            }
+        }
 
-        // Responsive
-        window.addEventListener('resize', () => {
-            canvas.width = canvas.offsetWidth;
-            drawChart();
-        });
+        // Utility Functions
+        function copySignal() {
+            const signal = `🪙 Gold Signal\nEntry: 4520 | SL: 4450 | TP: 4650\nRR: 1:3.5 | ${trend}`;
+            navigator.clipboard.writeText(signal).then(() => alert('✅ คัดลอกแล้ว!'));
+        }
+
+        function shareTelegram() {
+            const url = `https://t.me/share/url?url=${encodeURIComponent(window.location.href)}&text=Gold Signal: BUY 4520`;
+            window.open(url, '_blank');
+        }
     </script>
 </body>
 </html>

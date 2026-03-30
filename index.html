@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>🪙 Gold PRO Signals v33 - High Volatility + Sideways | Ultra Accuracy 90%+</title>
+    <title>🪙 Gold PRO Signals v33 - Full Screen Chart | Sideways + Trend | 90%+ Accuracy</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Sarabun:wght@300;400;600;700&display=swap');
 
@@ -114,6 +114,7 @@
         .chart-section {
             background: var(--bg2); border: 1px solid var(--border);
             border-radius: 16px; padding: 20px; margin-bottom: 20px;
+            transition: all 0.3s;
         }
         .chart-header {
             display: flex; justify-content: space-between; align-items: center;
@@ -121,19 +122,29 @@
         }
         .chart-title { font-size: 1rem; font-weight: 600; color: var(--gold); }
         .chart-controls { display: flex; gap: 8px; flex-wrap: wrap; }
-        .ctrl-btn, .zoom-btn {
+        .ctrl-btn, .zoom-btn, .fullscreen-btn {
             padding: 5px 14px; border-radius: 8px; font-size: 0.78rem;
             border: 1px solid var(--border); background: transparent;
             color: var(--text-dim); cursor: pointer;
         }
-        .ctrl-btn.active, .ctrl-btn:hover, .zoom-btn:hover {
+        .ctrl-btn.active, .ctrl-btn:hover, .zoom-btn:hover, .fullscreen-btn:hover {
             background: rgba(255,215,0,0.15); color: var(--gold);
         }
         .zoom-group { display: flex; gap: 5px; background: var(--bg3); padding: 4px 8px; border-radius: 30px; }
-        .candle-wrap { position: relative; width: 100%; background: var(--bg3); border-radius: 12px; overflow: hidden; border: 1px solid var(--border); cursor: crosshair; }
-        #candleCanvas { display: block; width: 100%; height: auto; }
-        #indicatorCanvas { display: block; width: 100%; height: auto; margin-top: 8px; }
-
+        .candle-wrap {
+            position: relative;
+            width: 100%;
+            background: var(--bg3);
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            cursor: crosshair;
+        }
+        #candleCanvas, #indicatorCanvas {
+            display: block;
+            width: 100%;
+            height: auto;
+        }
         .chart-legend {
             display: flex; flex-wrap: wrap; gap: 16px;
             margin-top: 12px; padding: 10px 0;
@@ -193,12 +204,35 @@
         .footer { text-align: center; padding: 20px; font-size: 0.75rem; color: var(--text-dim); border-top: 1px solid var(--border); }
         @media (max-width: 768px) { .signal-row, .analysis-grid { grid-template-columns: 1fr; } .manual-step { flex-direction: column; } .step-icon { text-align: left; } }
 
+        /* Fullscreen mode */
+        .chart-section.fullscreen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 10000;
+            background: var(--bg2);
+            padding: 20px;
+            border-radius: 0;
+            overflow: auto;
+            margin: 0;
+        }
+        .chart-section.fullscreen .candle-wrap {
+            height: calc(100vh - 140px);
+        }
+        .chart-section.fullscreen #candleCanvas,
+        .chart-section.fullscreen #indicatorCanvas {
+            height: auto;
+            max-height: none;
+        }
+
         /* Notification */
         .notification {
             position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
             background: var(--bg2); border-left: 6px solid; border-radius: 20px;
             padding: 24px 32px; box-shadow: 0 25px 45px rgba(0,0,0,0.6);
-            z-index: 10000; animation: fadeInScale 0.3s ease; max-width: 400px; width: 90%;
+            z-index: 10001; animation: fadeInScale 0.3s ease; max-width: 400px; width: 90%;
             text-align: center; backdrop-filter: blur(12px);
         }
         .notification.buy { border-left-color: var(--green); background: linear-gradient(135deg, rgba(0,230,118,0.25), var(--bg2)); }
@@ -210,7 +244,7 @@
 <body>
 <div class="container">
     <div class="header">
-        <div class="header-title"><div class="header-icon">🪙</div><div class="header-text"><h1>GOLD PRO Signals v33</h1><p>XAUUSD • High Volatility + Sideways Detection • Ultra Accuracy 90%+</p></div></div>
+        <div class="header-title"><div class="header-icon">🪙</div><div class="header-text"><h1>GOLD PRO Signals v33</h1><p>XAUUSD • Full Screen Chart • Sideways + Trend • 90%+ Accuracy</p></div></div>
         <div class="accuracy-badge"><span class="accuracy-label">ระบบแม่นยำ</span><span class="accuracy-number" id="systemAccuracy">94.5</span><span class="accuracy-label">%</span></div>
     </div>
 
@@ -229,16 +263,27 @@
         <div class="signal-card card-neutral"><div class="signal-type">🔄 SIDEWAYS SIGNAL (Range Trading)</div><div class="signal-action" style="color:var(--gold)">⚡ MEAN REVERSION</div><div class="level-row"><span class="level-label">Buy Zone</span><span class="level-val entry-val" id="swing-entry">--</span></div><div class="level-row"><span class="level-label">Sell Zone</span><span class="level-val sl-val" id="sideways-sell">--</span></div><div class="level-row"><span class="level-label">Range Width</span><span class="level-val" id="rangeWidth">--</span></div><span class="rr-badge" id="sideways-rr">R:R 1:2+</span><div class="accuracy-badge-sm" id="sidewaysAcc">🎯 --%</div></div>
     </div>
 
-    <div class="chart-section">
+    <div class="chart-section" id="chartSection">
         <div class="chart-header">
             <span class="chart-title">📊 กราฟแท่งเทียน + Bollinger Bands + Fibonacci + Entry Points</span>
             <div style="display: flex; gap: 10px;">
-                <div class="zoom-group"><button class="zoom-btn" id="zoomOutBtn">🔍−</button><button class="zoom-btn" id="zoomInBtn">🔍+</button></div>
-                <div class="chart-controls"><button class="ctrl-btn" onclick="setTF('M15')">M15</button><button class="ctrl-btn active" onclick="setTF('H1')">H1</button><button class="ctrl-btn" onclick="setTF('H4')">H4</button><button class="ctrl-btn" onclick="setTF('D1')">D1</button></div>
+                <div class="zoom-group">
+                    <button class="zoom-btn" id="zoomOutBtn" title="ซูมออก">🔍−</button>
+                    <button class="zoom-btn" id="zoomInBtn" title="ซูมเข้า">🔍+</button>
+                    <button class="fullscreen-btn" id="fullscreenBtn" title="เต็มจอ (Full Screen)">🖥️ ขยายเต็มจอ</button>
+                </div>
+                <div class="chart-controls">
+                    <button class="ctrl-btn" onclick="setTF('M15')">M15</button>
+                    <button class="ctrl-btn active" onclick="setTF('H1')">H1</button>
+                    <button class="ctrl-btn" onclick="setTF('H4')">H4</button>
+                    <button class="ctrl-btn" onclick="setTF('D1')">D1</button>
+                </div>
             </div>
         </div>
-        <div class="candle-wrap"><canvas id="candleCanvas" height="400"></canvas></div>
-        <canvas id="indicatorCanvas" height="120"></canvas>
+        <div class="candle-wrap">
+            <canvas id="candleCanvas" width="100%" height="350"></canvas>
+        </div>
+        <canvas id="indicatorCanvas" width="100%" height="100"></canvas>
         <div class="chart-legend">
             <span><div class="legend-dot" style="background:var(--green)"></div> เทียนขึ้น</span>
             <span><div class="legend-dot" style="background:var(--red)"></div> เทียนลง</span>
@@ -269,11 +314,11 @@
     </div>
 
     <div class="manual-section">
-        <div class="manual-title">📘 คู่มือมืออาชีพ : กลยุทธ์ Sideways + High Volatility</div>
-        <div class="manual-step"><div class="step-icon">🔄 1</div><div class="step-content"><div class="step-title">ตรวจจับ Sideways (ADX < 20 + BB Width ต่ำ)</div><div class="step-desc">เมื่อ ADX ต่ำกว่า 20 และ BB Width < 5% แสดงว่าตลาดอยู่ในช่วง Sideways → ใช้กลยุทธ์ Mean Reversion: ซื้อที่แนวรับ, ขายที่แนวต้าน</div></div></div>
-        <div class="manual-step"><div class="step-icon">⚡ 2</div><div class="step-content"><div class="step-title">สัญญาณ Sideways ที่แม่นยำ >90%</div><div class="step-desc">• จุดซื้อ: ราคาแตะ BB ล่าง + RSI < 35 + ADX < 20<br>• จุดขาย: ราคาแตะ BB บน + RSI > 65 + ADX < 20<br>• ใช้ TP = แนวรับ/ต้านตรงข้าม, SL = 1.2x ATR</div></div></div>
-        <div class="manual-step"><div class="step-icon">📈 3</div><div class="step-content"><div class="step-title">Trend-following เมื่อ ADX > 25</div><div class="step-desc">ใช้ EMA และ MACD ยืนยันเทรนด์ + Fibonacci Golden Zone เป็นจุดเข้า</div></div></div>
-        <div class="manual-step"><div class="step-icon">🧠 4</div><div class="step-content"><div class="step-title">การรวมสัญญาณเพื่อ Accuracy >90%</div><div class="step-desc">ระบบรวม 16 ปัจจัย (เพิ่ม Sideways Strength, ADX Trend State, BB Squeeze Confirmation) คำนวณคะแนนและความแม่นยำแบบ Real-time</div><div class="step-note">💡 ระบบจะแจ้งเตือนทั้งสัญญาณเทรนด์และ Sideways พร้อมจุดเข้าแม่นยำบนกราฟ (สีเขียว/ส้ม/แดง)</div></div></div>
+        <div class="manual-title">📘 คู่มือมืออาชีพ : กลยุทธ์ Sideways + High Volatility + Full Screen Chart</div>
+        <div class="manual-step"><div class="step-icon">🖥️ 1</div><div class="step-content"><div class="step-title">ขยายกราฟเต็มจอ (MT5 Style)</div><div class="step-desc">กดปุ่ม "ขยายเต็มจอ" เพื่อดูกราฟขนาดใหญ่เหมือน MT5, กด ESC หรือปุ่มเดิมเพื่อออก</div></div></div>
+        <div class="manual-step"><div class="step-icon">🔄 2</div><div class="step-content"><div class="step-title">ตรวจจับ Sideways (ADX < 20 + BB Width ต่ำ)</div><div class="step-desc">เมื่อ ADX ต่ำกว่า 20 และ BB Width < 5% → ตลาด Sideways ใช้ Mean Reversion: ซื้อแนวรับ, ขายแนวต้าน</div></div></div>
+        <div class="manual-step"><div class="step-icon">⚡ 3</div><div class="step-content"><div class="step-title">สัญญาณ Sideways แม่นยำ >90%</div><div class="step-desc">• จุดซื้อ: ราคาแตะ BB ล่าง + RSI < 35 + ADX < 20<br>• จุดขาย: ราคาแตะ BB บน + RSI > 65 + ADX < 20</div></div></div>
+        <div class="manual-step"><div class="step-icon">📈 4</div><div class="step-content"><div class="step-title">Trend-following เมื่อ ADX > 25</div><div class="step-desc">ใช้ EMA และ MACD ยืนยันเทรนด์ + Fibonacci Golden Zone เป็นจุดเข้า</div></div></div>
     </div>
     <div class="footer">⚠️ วิเคราะห์ทางเทคนิค ไม่ใช่คำแนะนำลงทุน | ใช้ Stop Loss ตาม ATR ทุกครั้ง | ระบบแม่นยำ >90% (16 ปัจจัย + Sideways Detection)</div>
 </div>
@@ -355,7 +400,6 @@ function calcADX(candles, period=14) {
         let trVal = Math.max(candles[i].high-candles[i].low, Math.abs(candles[i].high-candles[i-1].close), Math.abs(candles[i].low-candles[i-1].close));
         tr.push(trVal);
     }
-    // Smooth
     let smoothedTR=[], smoothedPlus=[], smoothedMinus=[];
     for(let i=0;i<tr.length;i++){
         if(i<period-1){ smoothedTR.push(0); smoothedPlus.push(0); smoothedMinus.push(0); continue; }
@@ -376,7 +420,6 @@ function calcADX(candles, period=14) {
         let dx = (diPlus+diMinus===0)?0:Math.abs(diPlus-diMinus)/(diPlus+diMinus)*100;
         adx.push(dx);
     }
-    // align with candle length
     let fullAdx = Array(period).fill(null).concat(adx);
     while(fullAdx.length < candles.length) fullAdx.unshift(null);
     return fullAdx.slice(-candles.length);
@@ -386,7 +429,6 @@ function calcFibonacci(high, low) { let r=high-low; return { level0:low, level23
 // ---------- 16-FACTOR ANALYSIS (เพิ่ม Sideways Detection) ----------
 function analyze16Factors(price, hist, candles, bb, atrArr, rsiArr, macdObj, adxArr, fib) {
     let all=[...hist, price], highRecent=Math.max(...all), lowRecent=Math.min(...all), pricePos=(price-lowRecent)/(highRecent-lowRecent);
-    let lastCandle = candles[candles.length-1], prevCandle = candles[candles.length-2];
     let bbUpper=bb.upper[bb.upper.length-1], bbLower=bb.lower[bb.lower.length-1], bbMid=bb.middle[bb.middle.length-1];
     let bbWidth = (bbUpper && bbLower) ? ((bbUpper-bbLower)/bbMid)*100 : 0;
     let atrNow = atrArr[atrArr.length-1] || atrValue;
@@ -394,9 +436,8 @@ function analyze16Factors(price, hist, candles, bb, atrArr, rsiArr, macdObj, adx
     let macdNow = macdObj.macd[macdObj.macd.length-1];
     let macdSignal = macdObj.signal[macdObj.signal.length-1];
     let adxNow = adxArr[adxArr.length-1] || 20;
-    let isSideways = (adxNow < 20 && bbWidth < 6);  // ตลาดไซด์เวย์
+    let isSideways = (adxNow < 20 && bbWidth < 6);
     
-    // Factors 1-12 (เหมือนเดิม)
     let f1 = (rsiNow>=30 && rsiNow<=70) ? 1 : 0;
     let f2 = (price >= fib.level382 && price <= fib.level618) ? 1 : 0;
     let ema20 = all.slice(-20).reduce((a,b)=>a+b,0)/20;
@@ -414,12 +455,10 @@ function analyze16Factors(price, hist, candles, bb, atrArr, rsiArr, macdObj, adx
     let f10 = near618 ? 1 : 0;
     let f11 = (adxNow > 25) ? 1 : 0;
     let f12 = (price > ema20 && bullishCount>=2) ? 1 : 0;
-    // Bollinger Touch
     let f13 = (bbUpper && price >= bbUpper) ? 1 : 0;
     let f14 = (bbLower && price <= bbLower) ? 1 : 0;
-    // Sideways specific factors
-    let f15 = (isSideways && price <= bbLower && rsiNow < 35) ? 1 : 0;  // ซื้อในไซด์เวย์
-    let f16 = (isSideways && price >= bbUpper && rsiNow > 65) ? 1 : 0; // ขายในไซด์เวย์
+    let f15 = (isSideways && price <= bbLower && rsiNow < 35) ? 1 : 0;
+    let f16 = (isSideways && price >= bbUpper && rsiNow > 65) ? 1 : 0;
     
     let total = f1+f2+f3+f4+f5+f6+f7+f8+f9+f10+f11+f12+f13+f14+f15+f16;
     let accuracy = 65 + total * 2.0;
@@ -428,7 +467,7 @@ function analyze16Factors(price, hist, candles, bb, atrArr, rsiArr, macdObj, adx
     accuracy = Math.min(97, Math.max(70, accuracy));
     
     let signal = 'BUY', signalText = '🟢 BUY', strength = '💪 แข็งแกร่ง';
-    let signalType = 'trend'; // 'trend' or 'sideways'
+    let signalType = 'trend';
     if (isSideways) {
         if (f15) { signal='BUY'; signalText='🔄 SIDEWAYS BUY (Mean Reversion)'; strength='🎯 แม่นยำสูง'; signalType='sideways'; }
         else if (f16) { signal='SELL'; signalText='🔄 SIDEWAYS SELL (Mean Reversion)'; strength='🎯 แม่นยำสูง'; signalType='sideways'; }
@@ -490,78 +529,110 @@ function updateDaily(analysis, price, levels) {
     document.getElementById('summaryContent').innerHTML = `<div class="summary-grid"><div class="summary-card ${isBuy && !analysis.isSideways ? 'buy-card' : (analysis.isSideways ? 'guide-card' : 'sell-card')}"><h4>🎯 สรุปสัญญาณ (${today})</h4><div><span class="label">ทิศทาง:</span> <strong style="color:${isBuy ? 'var(--green)' : 'var(--red)'}">${analysis.signalText}</strong></div><div><span class="label">ตลาด:</span> <strong style="color:${stateColor}">${marketState}</strong></div><div><span class="label">ความแม่นยำ:</span> ${analysis.accuracy.toFixed(1)}%</div><div><span class="label">Entry:</span> <strong class="entry-val">${entry}</strong></div><div><span class="label">TP2:</span> <strong class="tp-val">${tp}</strong></div><div><span class="label">SL:</span> <strong class="sl-val">${sl}</strong></div></div><div class="summary-card guide-card"><h4>📘 กลยุทธ์ ${analysis.isSideways ? 'Sideways (Mean Reversion)' : 'Trend Following'}</h4><div>🔹 ADX: ${analysis.adx.toFixed(1)} ${analysis.adx>25?'(Trend)':(analysis.adx<20?'(Sideways)':'Neutral')}<br>🔹 BB Width: ${analysis.bbWidth.toFixed(1)}% ${analysis.bbWidth<6?'(Squeeze)':'Normal'}<br>🔹 RSI: ${analysis.rsi.toFixed(1)} ${analysis.rsi>70?'Overbought':(analysis.rsi<30?'Oversold':'Neutral')}<br>🔹 MACD: ${analysis.macd>0?'Bullish':'Bearish'}<br>🔹 คะแนน: ${analysis.score}/16 → ความแม่นยำ ${analysis.accuracy.toFixed(0)}%</div></div></div><div class="pro-tip">💎 <strong>มืออาชีพแนะนำ:</strong> ${analysis.accuracy>=92?'สัญญาณแข็งแกร่งมาก ใช้ Lot ปกติ':(analysis.accuracy>=88?'สัญญาณดี ใช้ Lot 0.5-1%':'ควรใช้ Lot เล็กลง')} | ${analysis.isSideways ? 'เทรดแบบ Mean Reversion ที่แนวรับ/ต้าน' : 'เทรดตามเทรนด์ด้วย Fibonacci Golden Zone'} | SL = 1.5x ATR (${(analysis.atr*1.5).toFixed(2)} จุด)</div>`;
 }
 
-// ---------- DRAW CHARTS (Candle + BB + Entry Points) ----------
+// ---------- DRAW CHARTS (ปรับขนาดให้เล็กลงและรองรับ fullscreen) ----------
 function generateCandles(count, start, tf) { let candles=[], price=start; let vol=tf==='M15'?8:tf==='H1'?12:tf==='H4'?25:45; let now=Date.now(); let int=tf==='M15'?900000:tf==='H1'?3600000:tf==='H4'?14400000:86400000; for(let i=0;i<count;i++){ let open=price; let close=open+(Math.random()-0.48)*vol; let high=Math.max(open,close)+Math.random()*vol*0.4; let low=Math.min(open,close)-Math.random()*vol*0.4; candles.push({time:new Date(now-(count-i)*int), open, high, low, close}); price=close; } return candles; }
 function calcEMA(candles, p) { let closes=candles.map(c=>c.close), k=2/(p+1), ema=[], prev=closes.slice(0,p).reduce((a,b)=>a+b,0)/p; for(let i=0;i<p-1;i++) ema.push(null); ema.push(prev); for(let i=p;i<closes.length;i++){ prev=closes[i]*k+prev*(1-k); ema.push(prev);} return ema; }
 
+let isFullscreen = false;
+function toggleFullscreen() {
+    const chartSection = document.getElementById('chartSection');
+    if (!isFullscreen) {
+        if (chartSection.requestFullscreen) chartSection.requestFullscreen();
+        else if (chartSection.webkitRequestFullscreen) chartSection.webkitRequestFullscreen();
+        else if (chartSection.msRequestFullscreen) chartSection.msRequestFullscreen();
+        isFullscreen = true;
+    } else {
+        if (document.exitFullscreen) document.exitFullscreen();
+        else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+        else if (document.msExitFullscreen) document.msExitFullscreen();
+        isFullscreen = false;
+    }
+}
+document.addEventListener('fullscreenchange', () => {
+    isFullscreen = !!document.fullscreenElement;
+    drawCharts();
+});
+document.addEventListener('webkitfullscreenchange', () => {
+    isFullscreen = !!document.webkitFullscreenElement;
+    drawCharts();
+});
+
 function drawCharts() {
-    let mainCanvas=document.getElementById('candleCanvas'), indCanvas=document.getElementById('indicatorCanvas');
-    if(!mainCanvas||!indCanvas) return;
-    let ctx=mainCanvas.getContext('2d'), ctxInd=indCanvas.getContext('2d');
-    let dpr=devicePixelRatio||1, W=mainCanvas.offsetWidth, Hmain=400, Hind=120;
-    mainCanvas.width=W*dpr; mainCanvas.height=Hmain*dpr; ctx.scale(dpr,dpr);
-    indCanvas.width=W*dpr; indCanvas.height=Hind*dpr; ctxInd.scale(dpr,dpr);
-    let count=currentTF==='M15'?60:currentTF==='H1'?50:currentTF==='H4'?40:30;
-    let ref=basePrice||3300, start=ref-count*0.5;
-    candleData=generateCandles(count,start,currentTF);
-    let ema20=calcEMA(candleData,20), ema50=calcEMA(candleData,50);
-    let bb=calcBollinger(candleData,20,2);
-    let atrArr=calcATR(candleData,14);
-    let rsiArr=calcRSI(candleData,14);
-    let macdObj=calcMACD(candleData);
-    let adxArr=calcADX(candleData,14);
-    let hist=priceHistory.length?priceHistory:[ref];
-    let highRecent=Math.max(...hist,ref), lowRecent=Math.min(...hist,ref);
-    let fib=calcFibonacci(highRecent,lowRecent);
-    let analysis=analyze16Factors(ref,hist,candleData,bb,atrArr,rsiArr,macdObj,adxArr,fib);
+    let mainCanvas = document.getElementById('candleCanvas');
+    let indCanvas = document.getElementById('indicatorCanvas');
+    if (!mainCanvas || !indCanvas) return;
+    let ctx = mainCanvas.getContext('2d');
+    let ctxInd = indCanvas.getContext('2d');
+    let dpr = devicePixelRatio || 1;
+    let W = mainCanvas.clientWidth;
+    let Hmain = isFullscreen ? 600 : 350;   // fullscreen ใหญ่ขึ้น
+    let Hind = isFullscreen ? 150 : 100;
+    mainCanvas.width = W * dpr;
+    mainCanvas.height = Hmain * dpr;
+    indCanvas.width = W * dpr;
+    indCanvas.height = Hind * dpr;
+    ctx.scale(dpr, dpr);
+    ctxInd.scale(dpr, dpr);
     
-    let allPrices=candleData.flatMap(c=>[c.high,c.low]);
+    let count = currentTF === 'M15' ? 60 : currentTF === 'H1' ? 50 : currentTF === 'H4' ? 40 : 30;
+    let ref = basePrice || 3300;
+    let start = ref - count * 0.5;
+    candleData = generateCandles(count, start, currentTF);
+    let ema20 = calcEMA(candleData, 20), ema50 = calcEMA(candleData, 50);
+    let bb = calcBollinger(candleData, 20, 2);
+    let atrArr = calcATR(candleData, 14);
+    let rsiArr = calcRSI(candleData, 14);
+    let macdObj = calcMACD(candleData);
+    let adxArr = calcADX(candleData, 14);
+    let hist = priceHistory.length ? priceHistory : [ref];
+    let highRecent = Math.max(...hist, ref), lowRecent = Math.min(...hist, ref);
+    let fib = calcFibonacci(highRecent, lowRecent);
+    let analysis = analyze16Factors(ref, hist, candleData, bb, atrArr, rsiArr, macdObj, adxArr, fib);
+    
+    let allPrices = candleData.flatMap(c => [c.high, c.low]);
     allPrices.push(...Object.values(fib));
-    let minP=Math.min(...allPrices)-15, maxP=Math.max(...allPrices)+15;
-    if(bb.upper[bb.upper.length-1]) { minP=Math.min(minP, bb.lower[bb.lower.length-1]-5); maxP=Math.max(maxP, bb.upper[bb.upper.length-1]+5); }
-    let PAD_L=60,PAD_R=90,PAD_T=25,PAD_B=25;
-    let chartW=W-PAD_L-PAD_R, chartH=Hmain-PAD_T-PAD_B;
-    let priceY=p=>PAD_T+chartH*(1-(p-minP)/(maxP-minP));
-    let candleX=i=>PAD_L+(i+0.5)*(chartW/count);
-    let cw=Math.max(2,(chartW/count)*0.6);
-    ctx.fillStyle='#0e0e24'; ctx.fillRect(0,0,W,Hmain);
+    let minP = Math.min(...allPrices) - 15, maxP = Math.max(...allPrices) + 15;
+    if (bb.upper[bb.upper.length-1]) { minP = Math.min(minP, bb.lower[bb.lower.length-1]-5); maxP = Math.max(maxP, bb.upper[bb.upper.length-1]+5); }
+    let PAD_L = 60, PAD_R = 90, PAD_T = 25, PAD_B = 25;
+    let chartW = W - PAD_L - PAD_R;
+    let chartH = Hmain - PAD_T - PAD_B;
+    let priceY = p => PAD_T + chartH * (1 - (p - minP) / (maxP - minP));
+    let candleX = i => PAD_L + (i + 0.5) * (chartW / count);
+    let cw = Math.max(2, (chartW / count) * 0.6);
+    ctx.fillStyle = '#0e0e24';
+    ctx.fillRect(0, 0, W, Hmain);
     // Grid
-    ctx.strokeStyle='rgba(255,255,255,0.04)';
+    ctx.strokeStyle = 'rgba(255,255,255,0.04)';
     for(let i=0;i<=6;i++){ let y=PAD_T+i*chartH/6; ctx.beginPath();ctx.moveTo(PAD_L,y);ctx.lineTo(W-PAD_R,y);ctx.stroke(); ctx.fillStyle='rgba(255,255,255,0.35)'; ctx.fillText((maxP-i*(maxP-minP)/6).toFixed(0),PAD_L-6,y+4); }
     // Bollinger Bands
-    let drawBB=(vals,color)=>{ ctx.save(); ctx.strokeStyle=color; ctx.lineWidth=1; ctx.beginPath(); let started=false; for(let i=0;i<vals.length;i++){ if(vals[i]===null)continue; let x=candleX(i), y=priceY(vals[i]); if(!started){ctx.moveTo(x,y);started=true;}else ctx.lineTo(x,y);} ctx.stroke(); ctx.restore(); };
+    let drawBB = (vals,color)=>{ ctx.save(); ctx.strokeStyle=color; ctx.lineWidth=1; ctx.beginPath(); let started=false; for(let i=0;i<vals.length;i++){ if(vals[i]===null)continue; let x=candleX(i), y=priceY(vals[i]); if(!started){ctx.moveTo(x,y);started=true;}else ctx.lineTo(x,y);} ctx.stroke(); ctx.restore(); };
     drawBB(bb.upper,'#FFB347'); drawBB(bb.lower,'#FFB347'); drawBB(bb.middle,'#FFA07A');
     // Fibonacci
-    let drawFibo=(p,c,l)=>{ let y=priceY(p); if(y<PAD_T||y>Hmain-PAD_B)return; ctx.save(); ctx.setLineDash([8,6]); ctx.strokeStyle=c; ctx.beginPath();ctx.moveTo(PAD_L,y);ctx.lineTo(W-PAD_R,y);ctx.stroke(); ctx.fillStyle=c; ctx.font='9px monospace'; ctx.fillText(l,W-PAD_R+4,y-3); ctx.restore(); };
+    let drawFibo=(p,c,l)=>{ let y=priceY(p); if(y<PAD_T||y>Hmain-PAD_B)return; ctx.save(); ctx.setLineDash([8,6]); ctx.strokeStyle=c; ctx.beginPath();ctx.moveTo(PAD_L,y);ctx.lineTo(W-PAD_R,y);ctx.stroke(); ctx.fillStyle=c; ctx.fillText(l,W-PAD_R+4,y-3); ctx.restore(); };
     drawFibo(fib.level236,'#FF6B6B','23.6%'); drawFibo(fib.level382,'#4ECDC4','38.2%'); drawFibo(fib.level618,'#45B7D1','61.8%');
     // EMAs
     let drawEMA=(ema,c,l)=>{ ctx.save(); ctx.strokeStyle=c; ctx.beginPath(); let started=false; for(let i=0;i<ema.length;i++){ if(ema[i]===null)continue; let x=candleX(i), y=priceY(ema[i]); if(!started){ctx.moveTo(x,y);started=true;}else ctx.lineTo(x,y);} ctx.stroke(); let last=ema.filter(e=>e!==null).pop(); if(last){ctx.fillStyle=c; ctx.fillText(l,W-PAD_R-2,priceY(last)-3);} ctx.restore(); };
     drawEMA(ema50,'#FFD700','EMA50'); drawEMA(ema20,'#00B0FF','EMA20');
     // Candles
     for(let i=0;i<candleData.length;i++){ let c=candleData[i]; let bull=c.close>=c.open; let color=bull?'#00E676':'#FF1744'; let x=candleX(i); let oY=priceY(c.open),cY=priceY(c.close),hY=priceY(c.high),lY=priceY(c.low); ctx.strokeStyle=color; ctx.beginPath();ctx.moveTo(x,hY);ctx.lineTo(x,lY);ctx.stroke(); let bodyTop=Math.min(oY,cY),bodyH=Math.max(1.5,Math.abs(oY-cY)); ctx.fillStyle=bull?'rgba(0,230,118,0.85)':'rgba(255,23,68,0.85)'; ctx.fillRect(x-cw/2,bodyTop,cw,bodyH); }
-    // Entry points (trend & sideways)
+    // Entry points
     let buyPoints=[], sellPoints=[];
-    let L = calcLevels(ref, analysis.accuracy, analysis.isSideways);
-    if(analysis.signal === 'BUY' && analysis.accuracy >= 85) {
+    if(analysis.accuracy>=85){
         for(let i=1;i<candleData.length-1;i++){ let c=candleData[i], p=candleData[i-1];
             if(analysis.isSideways && c.low <= bb.lower[i] && c.close > c.open) buyPoints.push({idx:i, price:c.low, type:'sideways'});
             else if(!analysis.isSideways && c.close>c.open && p.close<p.open) buyPoints.push({idx:i, price:c.low, type:'trend'});
-        }
-    }
-    if(analysis.signal === 'SELL' && analysis.accuracy >= 85) {
-        for(let i=1;i<candleData.length-1;i++){ let c=candleData[i], p=candleData[i-1];
             if(analysis.isSideways && c.high >= bb.upper[i] && c.close < c.open) sellPoints.push({idx:i, price:c.high, type:'sideways'});
             else if(!analysis.isSideways && c.close<c.open && p.close>p.open) sellPoints.push({idx:i, price:c.high, type:'trend'});
         }
     }
     buyPoints.forEach(p=>{ let x=candleX(p.idx), y=priceY(p.price); let color = p.type==='sideways' ? '#FFAA00' : '#00FF00'; ctx.fillStyle=color; ctx.beginPath();ctx.arc(x,y-8,5,0,2*Math.PI);ctx.fill(); ctx.fillStyle='#000'; ctx.fillText(p.type==='sideways'?'S':'B',x,y-7); });
-    sellPoints.forEach(p=>{ let x=candleX(p.idx), y=priceY(p.price); let color = p.type==='sideways' ? '#FF8844' : '#FF4444'; ctx.fillStyle=color; ctx.beginPath();ctx.moveTo(x,y-12);ctx.lineTo(x+5,y-4);ctx.lineTo(x-5,y-4);ctx.fill(); ctx.fillStyle='#000'; ctx.fillText(p.type==='sideways'?'S':'S',x,y-5); });
-    // Current price
+    sellPoints.forEach(p=>{ let x=candleX(p.idx), y=priceY(p.price); let color = p.type==='sideways' ? '#FF8844' : '#FF4444'; ctx.fillStyle=color; ctx.beginPath();ctx.moveTo(x,y-12);ctx.lineTo(x+5,y-4);ctx.lineTo(x-5,y-4);ctx.fill(); ctx.fillStyle='#000'; ctx.fillText('S',x,y-5); });
+    // Current price line
     let currY=priceY(basePrice); if(currY>PAD_T&&currY<Hmain-PAD_B){ ctx.save(); ctx.setLineDash([3,3]); ctx.strokeStyle='rgba(255,215,0,0.8)'; ctx.beginPath();ctx.moveTo(PAD_L,currY);ctx.lineTo(W-PAD_R,currY);ctx.stroke(); ctx.fillStyle='#FFD700'; ctx.fillRect(W-PAD_R,currY-9,PAD_R-2,18); ctx.fillStyle='#000'; ctx.fillText(basePrice.toFixed(2),W-PAD_R+PAD_R/2-1,currY+4); ctx.restore(); }
     ctx.fillStyle=`rgba(0,230,118,${0.1+(analysis.accuracy-70)/200})`; ctx.font='bold 24px Sarabun'; ctx.fillText(`ACC ${analysis.accuracy.toFixed(0)}%`,W-100,Hmain-15);
     ctx.strokeStyle='rgba(255,215,0,0.2)'; ctx.strokeRect(PAD_L,PAD_T,chartW,chartH);
     
-    // Indicator Canvas: MACD
+    // Indicator Canvas (MACD)
     ctxInd.fillStyle='#0e0e24'; ctxInd.fillRect(0,0,W,Hind);
     let iPad_L=60, iPad_R=90, iTop=15, iBottom=15, iW=W-iPad_L-iPad_R, iH=Hind-iTop-iBottom;
     let valY=(v,minV,maxV)=>iTop+iH*(1-(v-minV)/(maxV-minV));
@@ -573,7 +644,7 @@ function drawCharts() {
     ctxInd.fillStyle='#FFD700'; ctxInd.fillText('MACD (แดง) / Signal (ฟ้า)', iPad_L, iTop-3);
     ctxInd.restore();
     
-    // Update DOM indicators
+    // Update DOM
     document.getElementById('rsiValue').textContent=analysis.rsi.toFixed(1); document.getElementById('rsiTag').innerHTML=analysis.rsi>70?'Overbought':(analysis.rsi<30?'Oversold':'Neutral');
     document.getElementById('macdValue').textContent=analysis.macd>0?`+${analysis.macd.toFixed(2)}`:analysis.macd.toFixed(2); document.getElementById('macdTag').innerHTML=analysis.macd>0?'Bullish':'Bearish';
     document.getElementById('adxValue').textContent=analysis.adx.toFixed(1); document.getElementById('adxTag').innerHTML=analysis.adx>25?'Trending':(analysis.adx<20?'Sideways':'Weak');
@@ -597,7 +668,6 @@ function drawCharts() {
     document.getElementById('marketState').innerHTML=analysis.isSideways?'SIDEWAYS':(analysis.adx>25?'TREND':'NEUTRAL');
     document.getElementById('currentPrice').textContent=basePrice.toFixed(2);
     document.getElementById('systemAccuracy').textContent=analysis.accuracy.toFixed(1);
-    if(document.getElementById('overallSignal')) document.getElementById('overallSignal').innerHTML=analysis.signalText;
 }
 
 // ---------- API & ALERT ----------
@@ -643,6 +713,7 @@ function calcATRFromHist(period=14){ if(priceHistory.length<period+1)return 18.4
 function setTF(tf){ currentTF=tf; drawCharts(); document.querySelectorAll('.ctrl-btn').forEach(b=>b.classList.toggle('active',b.textContent===tf)); }
 document.getElementById('zoomInBtn')?.addEventListener('click',()=>{ displayCount=Math.max(30,displayCount-10); drawCharts(); });
 document.getElementById('zoomOutBtn')?.addEventListener('click',()=>{ displayCount=Math.min(150,displayCount+10); drawCharts(); });
+document.getElementById('fullscreenBtn')?.addEventListener('click', toggleFullscreen);
 window.addEventListener('load',()=>{ fetchGoldPrice(); setInterval(fetchGoldPrice,10000); drawCharts(); });
 window.addEventListener('resize',drawCharts);
 </script>

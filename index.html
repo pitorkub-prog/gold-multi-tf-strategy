@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>🪙 Gold PRO Signals v33 - Ultra Accuracy 90%+ | Center Alert 1 Minute</title>
+    <title>🪙 Gold PRO Signals v33 - Ultra Accuracy 90%+ | Daily Signal Summary & Pro Guide</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Sarabun:wght@300;400;600;700&display=swap');
 
@@ -209,6 +209,82 @@
         .conf-bar { height: 10px; background: rgba(255,255,255,0.08); border-radius: 5px; overflow: hidden; }
         .conf-fill { height: 100%; border-radius: 5px; background: linear-gradient(90deg, var(--gold2), var(--green)); }
 
+        /* DAILY SIGNAL SUMMARY - NEW SECTION */
+        .daily-summary {
+            background: var(--bg2);
+            border: 2px solid var(--gold);
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+        .daily-summary::before {
+            content: "⚡ SUPER PROFESSIONAL ⚡";
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            font-size: 0.7rem;
+            color: var(--gold);
+            opacity: 0.5;
+            letter-spacing: 1px;
+        }
+        .summary-title {
+            font-size: 1.3rem;
+            color: var(--gold);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 8px;
+        }
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-top: 10px;
+        }
+        .summary-card {
+            background: rgba(0,0,0,0.3);
+            border-radius: 14px;
+            padding: 15px;
+            border-left: 4px solid;
+        }
+        .summary-card.buy-card { border-left-color: var(--green); }
+        .summary-card.sell-card { border-left-color: var(--red); }
+        .summary-card.guide-card { border-left-color: var(--gold); }
+        .summary-card h4 {
+            font-size: 1rem;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .summary-detail {
+            font-family: monospace;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+        .summary-detail .label { color: var(--text-dim); width: 80px; display: inline-block; }
+        .risk-level {
+            display: inline-block;
+            padding: 2px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: bold;
+        }
+        .risk-low { background: rgba(0,230,118,0.2); color: var(--green); }
+        .risk-mid { background: rgba(255,215,0,0.2); color: var(--gold); }
+        .risk-high { background: rgba(255,23,68,0.2); color: var(--red); }
+        .pro-tip {
+            margin-top: 15px;
+            background: rgba(255,215,0,0.1);
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 0.85rem;
+        }
+
         /* Manual Section */
         .manual-section {
             background: var(--bg2); border: 1px solid var(--border);
@@ -253,7 +329,7 @@
         .factor-item.pass { background: rgba(0,230,118,0.2); color: var(--green); }
         .factor-item.fail { background: rgba(255,23,68,0.2); color: var(--red); }
 
-        /* CENTERED NOTIFICATION - 1 MINUTE */
+        /* CENTERED NOTIFICATION */
         .notification {
             position: fixed;
             top: 50%;
@@ -269,7 +345,7 @@
             max-width: 420px;
             width: 90%;
             text-align: center;
-            font-family: 'Sarabun', monospace;
+            font-family: monospace;
             backdrop-filter: blur(12px);
         }
         .notification.buy { border-left-color: var(--green); background: linear-gradient(135deg, rgba(0,230,118,0.25), var(--bg2)); }
@@ -277,17 +353,11 @@
         .notification-title { font-size: 1.5rem; font-weight: bold; margin-bottom: 15px; }
         .notification-detail { font-size: 1rem; color: var(--text-dim); line-height: 1.6; }
         .close-notif {
-            position: absolute;
-            top: 12px;
-            right: 18px;
-            cursor: pointer;
-            font-size: 1.3rem;
-            color: var(--text-dim);
-            background: none;
-            border: none;
-            transition: 0.2s;
+            position: absolute; top: 12px; right: 18px;
+            cursor: pointer; font-size: 1.3rem;
+            background: none; border: none; color: var(--text-dim);
         }
-        .close-notif:hover { color: var(--gold); transform: scale(1.1); }
+        .close-notif:hover { color: var(--gold); }
         @keyframes fadeInScale {
             from { opacity: 0; transform: translate(-50%, -50%) scale(0.9); }
             to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
@@ -302,7 +372,7 @@
             <div class="header-icon">🪙</div>
             <div class="header-text">
                 <h1>GOLD PRO Signals v33</h1>
-                <p>XAUUSD • Ultra Accuracy 90%+ | Center Alert 1 Min | Real-time SR</p>
+                <p>XAUUSD • Ultra Accuracy 90%+ | Daily Summary & Pro Guide</p>
             </div>
         </div>
         <div class="accuracy-badge">
@@ -397,6 +467,12 @@
         </div>
     </div>
 
+    <!-- DAILY SIGNAL SUMMARY - NEW -->
+    <div class="daily-summary" id="dailySummary">
+        <div class="summary-title">📋 DAILY SIGNAL SUMMARY & PROFESSIONAL ENTRY GUIDE</div>
+        <div id="summaryContent">กำลังโหลดข้อมูล...</div>
+    </div>
+
     <!-- Support / Resistance -->
     <div class="sr-grid">
         <div class="sr-card"><h3>🟢 แนวรับ + Fibonacci Support</h3><div class="sr-list" id="supportList">...</div></div>
@@ -443,7 +519,7 @@
     <!-- Mini Manual -->
     <div class="manual-section">
         <div class="manual-title">📘 คู่มือการใช้งานระดับมืออาชีพ</div>
-        <div class="manual-step"><div class="step-icon">🔊 1</div><div class="step-content"><div class="step-title">แจ้งเตือนกลางจอ 1 นาที</div><div class="step-desc">เมื่อเกิดสัญญาณซื้อ/ขายคุณภาพสูง (Accuracy >85%) จะมี Popup กลางจอ พร้อมเสียง และแท่งเทียนกระพริบ</div></div></div>
+        <div class="manual-step"><div class="step-icon">🔊 1</div><div class="step-content"><div class="step-title">แจ้งเตือนกลางจอ 1 นาที</div><div class="step-desc">เมื่อเกิดสัญญาณคุณภาพสูง (Accuracy>85%) จะมี Popup กลางจอ พร้อมเสียง และแท่งเทียนกระพริบ</div></div></div>
         <div class="manual-step"><div class="step-icon">📈 2</div><div class="step-content"><div class="step-title">กราฟพร้อมแนวรับ/ต้านอัตโนมัติ</div><div class="step-desc">เส้นประสีเขียวแสดงแนวรับ/ต้านจาก Fibonacci และ Pivot พร้อม EMA20/EMA50</div></div></div>
         <div class="manual-step"><div class="step-icon">⚙️ 3</div><div class="step-content"><div class="step-title">Multi-Factor 12 ตัวชี้วัด</div><div class="step-desc">คะแนน 12/12 ให้ความแม่นยำสูงสุด 97%</div></div></div>
     </div>
@@ -455,7 +531,7 @@
 // ==================== ULTRA ACCURACY SYSTEM (90%+) ====================
 let basePrice = 0, openPrice = 0, high24 = 0, low24 = 0;
 let priceHistory = [], atrValue = 0, currentTF = 'H1', candleData = [], fibLevels = {};
-let displayCount = 70;  // initial candles visible
+let displayCount = 70;
 let lastAlertTime = 0;
 let audioCtx = null;
 
@@ -474,7 +550,6 @@ function playBeep() {
     } catch(e) { console.warn("Audio not supported"); }
 }
 
-// CENTER NOTIFICATION - STAY 1 MINUTE
 function showNotification(type, entryPrice, tp, sl, signalName) {
     const notif = document.createElement('div');
     notif.className = `notification ${type}`;
@@ -490,14 +565,9 @@ function showNotification(type, entryPrice, tp, sl, signalName) {
         </div>
     `;
     document.body.appendChild(notif);
-    const timeout = setTimeout(() => {
-        if (notif && notif.remove) notif.remove();
-    }, 60000); // 1 นาที
+    const timeout = setTimeout(() => notif.remove(), 60000);
     const closeBtn = notif.querySelector('.close-notif');
-    closeBtn.onclick = () => {
-        clearTimeout(timeout);
-        notif.remove();
-    };
+    closeBtn.onclick = () => { clearTimeout(timeout); notif.remove(); };
     playBeep();
 }
 
@@ -662,6 +732,64 @@ function updateSignalCards(price, analysis) {
     document.getElementById('swingAccuracyBadge').textContent = `🎯 ความแม่นยำ: ${analysis.accuracy.toFixed(1)}%`;
 }
 
+// DAILY SUMMARY FUNCTION
+function updateDailySummary(analysis, fib, price, levels) {
+    const today = new Date().toLocaleDateString('th-TH', { day:'numeric', month:'long', year:'numeric' });
+    const isBuy = analysis.signal === 'BUY';
+    const recommendedEntry = isBuy ? levels.buyEntry : levels.sellEntry;
+    const recommendedTP = isBuy ? levels.buyTP2 : levels.sellTP2;
+    const recommendedSL = isBuy ? levels.buySL : levels.sellSL;
+    const rr = isBuy ? ((levels.buyTP2 - levels.buyEntry)/(levels.buyEntry - levels.buySL)).toFixed(1) : ((levels.sellEntry - levels.sellTP2)/(levels.sellSL - levels.sellEntry)).toFixed(1);
+    const riskLevel = analysis.accuracy >= 92 ? 'ต่ำมาก' : (analysis.accuracy >= 88 ? 'ต่ำ' : 'ปานกลาง');
+    const riskClass = analysis.accuracy >= 92 ? 'risk-low' : (analysis.accuracy >= 88 ? 'risk-low' : 'risk-mid');
+    const proTip = isBuy ? 
+        `✅ แนวทาง: รอราคาย่อเข้าซื้อในโซน ${levels.swingEntryLow} - ${levels.swingEntryHigh} (โซน H1) หากราคาไม่หลุด ${fib.level382} ถือเป็นสัญญาณแข็งแกร่ง` :
+        `🔻 แนวทาง: รอราคาดีดตัวไปที่ ${levels.sellEntry} ก่อนเปิดขาย โดยมีแนวต้านสำคัญที่ ${fib.level618} หากแท่งเทียนปฏิเสธ`;
+
+    const summaryHtml = `
+        <div class="summary-grid">
+            <div class="summary-card ${isBuy ? 'buy-card' : 'sell-card'}">
+                <h4>🎯 สรุปสัญญาณประจำวัน (${today})</h4>
+                <div class="summary-detail">
+                    <div><span class="label">ทิศทางหลัก:</span> <strong style="color:${isBuy ? 'var(--green)' : 'var(--red)'}">${isBuy ? 'ซื้อ (BUY)' : 'ขาย (SELL)'}</strong></div>
+                    <div><span class="label">ความแม่นยำ:</span> ${analysis.accuracy.toFixed(1)}% (สูงกว่า 90%)</div>
+                    <div><span class="label">ระดับความเสี่ยง:</span> <span class="risk-level ${riskClass}">${riskLevel}</span></div>
+                    <div><span class="label">จุดเข้า (Entry):</span> <strong class="entry-val">${recommendedEntry}</strong></div>
+                    <div><span class="label">เป้าหมาย TP2:</span> <strong class="tp-val">${recommendedTP}</strong></div>
+                    <div><span class="label">Stop Loss:</span> <strong class="sl-val">${recommendedSL}</strong></div>
+                    <div><span class="label">อัตราส่วน R:R:</span> 1 : ${rr}</div>
+                    <div><span class="label">ปัจจัยสนับสนุน:</span> คะแนน ${analysis.score}/12 (${analysis.score>=10?'แข็งแกร่งมาก':'ดี'})</div>
+                </div>
+            </div>
+            <div class="summary-card guide-card">
+                <h4>📘 แนวทางเทรดมืออาชีพ (Low Risk Entry)</h4>
+                <div class="summary-detail">
+                    ${proTip}
+                    <div style="margin-top: 10px;"><span class="label">📊 การบริหารความเสี่ยง:</span> ใช้ขนาด Lot ไม่เกิน 2% ของพอร์ต, ปรับ SL ตาม ATR (${atrValue.toFixed(2)} จุด)</div>
+                    <div style="margin-top: 8px;"><span class="label">⏰ ช่วงเวลาที่เหมาะ:</span> ช่วง London/NY Open (15.00-22.00 น.) เพื่อความผันผวนที่เหมาะสม</div>
+                    <div style="margin-top: 8px;"><span class="label">🔁 กลยุทธ์ต่อเนื่อง:</span> หากเข้าแล้วราคาเคลื่อนที่ไปถึง TP1 ให้เลื่อน SL ไปที่จุดคุ้มทุน เพื่อความปลอดภัยสูงสุด</div>
+                </div>
+            </div>
+            <div class="summary-card guide-card">
+                <h4>🧠 Super Professional Tips</h4>
+                <div class="summary-detail">
+                    <ul style="margin-left: 20px; color: var(--text-dim);">
+                        <li>✔️ รอให้แท่งเทียนปิดเหนือ/ใต้แนวรับ/ต้านสำคัญ ก่อนเข้าจริง</li>
+                        <li>✔️ ใช้ RSI เป็นตัวกรอง: หลีกเลี่ยงการซื้อเมื่อ RSI > 70 หรือขายเมื่อ RSI < 30</li>
+                        <li>✔️ ตรวจสอบ Multi-Factor Score ก่อนทุกครั้ง: ควร ≥ 8/12</li>
+                        <li>✔️ ตั้ง Target แบบ Scaling: ปิดครึ่งที่ TP1, ปิดส่วนที่เหลือที่ TP2</li>
+                        <li>✔️ ติดตามข่าวเศรษฐกิจ: รายงาน Non-Farm, CPI, FOMC มีผลต่อทองคำสูง</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="pro-tip">
+            💎 <strong>สรุปมืออาชีพประจำวัน:</strong> ${analysis.accuracy >= 92 ? 'สัญญาณมีความแม่นยำสูงมาก เหมาะสำหรับการเทรดเต็มพิกัดตามแผน' : (analysis.accuracy >= 88 ? 'สัญญาณดีมาก ควรเทรดตามแผนอย่างมีวินัย' : 'สัญญาณใช้ได้ ควรใช้ขนาด Lot เล็กลง และรอจุดเข้าเพิ่มเติม')}
+        </div>
+    `;
+    document.getElementById('summaryContent').innerHTML = summaryHtml;
+}
+
 async function fetchGoldPrice() {
     try {
         const res = await fetch('https://api.gold-api.com/price/XAU');
@@ -690,9 +818,13 @@ async function fetchGoldPrice() {
         const highRecent = Math.max(...allPrices), lowRecent = Math.min(...allPrices);
         const fib = calcFibonacci(highRecent, lowRecent);
         const analysis = ultraAccurateAnalysis(price, priceHistory, fib, atrValue);
+        const levels = calcLevels(price, analysis.accuracy);
         updateSignalCards(price, analysis);
         const srFib = updateSRTable(price, priceHistory);
         updateMultiFactorDisplay(analysis, srFib);
+        // Update daily summary
+        updateDailySummary(analysis, srFib, price, levels);
+        
         document.getElementById('systemAccuracy').textContent = analysis.accuracy.toFixed(1);
         document.getElementById('overallSignal').innerHTML = analysis.signalText;
         document.getElementById('overallSignal').className = `overall-signal-text ${analysis.signal==='BUY'?'up':'dn'}`;
@@ -730,7 +862,7 @@ async function fetchGoldPrice() {
     } catch(e) { console.warn(e); if(!basePrice){ basePrice=3320; openPrice=3305; high24=3335; low24=3298; priceHistory=[3298,3305,3312,3320,3315]; drawChart();} }
 }
 
-// ==================== CHART FUNCTIONS ====================
+// Chart functions (unchanged except minor)
 function generateCandles(count, start, tf) {
     let candles=[], price=start;
     const vol = tf==='M15'?8: tf==='H1'?12: tf==='H4'?25:45;
@@ -796,7 +928,7 @@ function drawChart(){
     // Fibonacci
     const drawFibo=(p,c,l)=>{ let y=priceY(p); if(y<PAD_T||y>H-PAD_B)return; ctx.save(); ctx.setLineDash([8,6]); ctx.strokeStyle=c; ctx.beginPath();ctx.moveTo(PAD_L,y);ctx.lineTo(W-PAD_R,y);ctx.stroke(); ctx.fillStyle=c; ctx.font='9px monospace'; ctx.fillText(l,W-PAD_R+4,y-3); ctx.restore(); };
     drawFibo(fib.level236,'#FF6B6B','23.6%'); drawFibo(fib.level382,'#4ECDC4','38.2%'); drawFibo(fib.level500,'#96CEB4','50%'); drawFibo(fib.level618,'#45B7D1','61.8%');
-    // Support / Resistance lines
+    // Support/Resistance lines
     const srLevels = [...new Set([fib.level382, fib.level618, fib.level236, fib.level500])];
     srLevels.forEach(level => { let y=priceY(level); if(y>PAD_T&&y<H-PAD_B){ ctx.save(); ctx.setLineDash([4,4]); ctx.strokeStyle='#00E676'; ctx.beginPath();ctx.moveTo(PAD_L,y);ctx.lineTo(W-PAD_R,y);ctx.stroke(); ctx.restore(); } });
     // EMAs

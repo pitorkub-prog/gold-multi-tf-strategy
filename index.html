@@ -65,7 +65,7 @@
         .accuracy-number { font-size: 1.6rem; font-weight: 700; color: var(--green); font-family: monospace; }
         .accuracy-label { font-size: 0.7rem; color: var(--text-dim); }
 
-        /* Chart Container */
+        /* Chart Section */
         .chart-section {
             background: var(--bg2);
             border: 1px solid var(--border);
@@ -151,16 +151,6 @@
             to { transform: translateX(0); opacity: 1; }
         }
 
-        /* Blinking candle effect (overlay class) */
-        .blink-candle {
-            animation: blink-animation 0.5s infinite;
-        }
-        @keyframes blink-animation {
-            0% { filter: brightness(1); }
-            50% { filter: brightness(1.8) drop-shadow(0 0 5px gold); }
-            100% { filter: brightness(1); }
-        }
-
         .legend {
             display: flex; flex-wrap: wrap; gap: 16px;
             margin-top: 12px; padding: 10px 0;
@@ -168,6 +158,25 @@
         .legend-item { display: flex; align-items: center; gap: 6px; font-size: 0.78rem; color: var(--text-dim); }
         .legend-dot { width: 10px; height: 10px; border-radius: 50%; }
         .legend-line { width: 20px; height: 2px; border-radius: 2px; }
+
+        /* Mini signal cards */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+        .signal-mini-card {
+            border-radius: 12px;
+            padding: 12px;
+            backdrop-filter: blur(8px);
+            border: 1px solid;
+        }
+        .signal-mini-card.buy { background: rgba(0,230,118,0.05); border-color: rgba(0,230,118,0.3); }
+        .signal-mini-card.sell { background: rgba(255,23,68,0.05); border-color: rgba(255,23,68,0.3); }
+        .signal-mini-card.neutral { background: rgba(255,215,0,0.05); border-color: rgba(255,215,0,0.3); }
+        .signal-mini-card .title { font-size: 0.7rem; color: var(--text-dim); text-transform: uppercase; margin-bottom: 5px; }
+        .signal-mini-card .value { font-family: monospace; font-size: 0.85rem; }
 
         .footer {
             text-align: center; padding: 20px;
@@ -177,6 +186,7 @@
         @media (max-width: 768px) {
             .price-panel { top: 60px; right: 10px; padding: 8px 12px; }
             .price-panel .value { font-size: 1rem; }
+            .cards-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -215,7 +225,7 @@
             </div>
         </div>
         <div class="candle-wrap" id="candleWrap">
-            <canvas id="candleCanvas" height="500"></canvas>
+            <canvas id="candleCanvas" height="400"></canvas>
         </div>
         <!-- Floating price panel (right side) -->
         <div class="price-panel" id="pricePanel">
@@ -236,18 +246,18 @@
     </div>
 
     <!-- Mini signal cards (quick view) -->
-    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-bottom: 20px;">
-        <div class="card-buy" style="background: rgba(0,230,118,0.05); border:1px solid rgba(0,230,118,0.3); border-radius:12px; padding:12px;">
-            <div style="font-size:0.7rem;">📈 BUY (M15)</div>
-            <div><strong>Entry:</strong> <span id="buyEntry">--</span> | <strong>TP:</strong> <span id="buyTP">--</span> | <strong>SL:</strong> <span id="buySL">--</span></div>
+    <div class="cards-grid">
+        <div class="signal-mini-card buy">
+            <div class="title">📈 BUY (M15)</div>
+            <div class="value">Entry: <span id="buyEntry">--</span> &nbsp; TP: <span id="buyTP">--</span> &nbsp; SL: <span id="buySL">--</span></div>
         </div>
-        <div class="card-sell" style="background: rgba(255,23,68,0.05); border:1px solid rgba(255,23,68,0.3); border-radius:12px; padding:12px;">
-            <div style="font-size:0.7rem;">📉 SELL (M15)</div>
-            <div><strong>Entry:</strong> <span id="sellEntry">--</span> | <strong>TP:</strong> <span id="sellTP">--</span> | <strong>SL:</strong> <span id="sellSL">--</span></div>
+        <div class="signal-mini-card sell">
+            <div class="title">📉 SELL (M15)</div>
+            <div class="value">Entry: <span id="sellEntry">--</span> &nbsp; TP: <span id="sellTP">--</span> &nbsp; SL: <span id="sellSL">--</span></div>
         </div>
-        <div class="card-neutral" style="background: rgba(255,215,0,0.05); border:1px solid rgba(255,215,0,0.3); border-radius:12px; padding:12px;">
-            <div style="font-size:0.7rem;">⚡ SWING (H1)</div>
-            <div><strong>Zone:</strong> <span id="swingZone">--</span> | <strong>TP2:</strong> <span id="swingTP">--</span></div>
+        <div class="signal-mini-card neutral">
+            <div class="title">⚡ SWING (H1)</div>
+            <div class="value">Zone: <span id="swingZone">--</span> &nbsp; TP2: <span id="swingTP">--</span></div>
         </div>
     </div>
 
@@ -262,15 +272,12 @@
     let priceHistory = [];
     let atrValue = 18.45;
     let currentTF = 'H1';
-    let fullCandleData = [];      // เก็บแท่งเทียนทั้งหมด (max 200)
-    let displayStart = 0;          // index เริ่มต้นที่จะแสดง (0 = ล่าสุด)
-    let displayCount = 60;         // จำนวนแท่งที่แสดง (Zoom)
-    let lastBuyPoints = [], lastSellPoints = [];
-    let alertCooldown = false;
-    let audioCtx = null;
+    let fullCandleData = [];          // เก็บแท่งเทียนทั้งหมด (max 200)
+    let displayCount = 80;             // จำนวนแท่งที่แสดง (ค่าเริ่มต้นมากขึ้นเพื่อให้แท่งเล็กลง)
     let lastAlertTime = 0;
+    let audioCtx = null;
 
-    // ฟังก์ชันเสียง (ใช้ Web Audio)
+    // ฟังก์ชันเสียง
     function playBeep() {
         try {
             if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -305,16 +312,15 @@
         playBeep();
     }
 
-    // ฟังก์ชันกระพริบแท่งเทียนที่ index (ซ้อนทับ canvas)
-    function blinkCandle(index) {
+    // กระพริบแท่งเทียน (visual effect)
+    function blinkCandle() {
         const canvas = document.getElementById('candleCanvas');
         if (!canvas) return;
-        // เราไม่สามารถทำให้ canvas บางส่วนกระพริบง่าย ๆ ได้ แต่ใช้ class overlay ชั่วคราว
         canvas.style.filter = 'brightness(1.2) drop-shadow(0 0 4px gold)';
         setTimeout(() => { canvas.style.filter = ''; }, 600);
     }
 
-    // ---------- ฟังก์ชันวิเคราะห์ (12 factors) เหมือนเดิม ----------
+    // ---------- ฟังก์ชันวิเคราะห์ 12 ปัจจัย ----------
     function calcFibonacci(high, low) {
         const r = high - low;
         return { level0: low, level236: low + r*0.236, level382: low + r*0.382, level500: low + r*0.5, level618: low + r*0.618, level786: low + r*0.786, level100: high };
@@ -367,7 +373,7 @@
         return { score: total, accuracy, signal, factors, rsi, macd, ema20, ema50, adx };
     }
 
-    // สร้างแท่งเทียน (แบบคงที่, เก็บไว้ 200 แท่ง)
+    // สร้างแท่งเทียน (เก็บไว้ 200 แท่ง)
     function generateFullCandles(basePrice, tf) {
         const count = 200;
         let price = basePrice;
@@ -402,6 +408,7 @@
             openPrice = parseFloat(data.prev_close_price) || price;
             high24 = parseFloat(data.high_price) || price;
             low24 = parseFloat(data.low_price) || price;
+            // ATR
             atrValue = (()=>{
                 if (priceHistory.length < 15) return 18.45;
                 let sum=0;
@@ -412,6 +419,7 @@
                 }
                 return sum/14;
             })();
+
             document.getElementById('panelPrice').innerText = price.toFixed(2);
             const change = price - openPrice;
             const pct = (change/openPrice*100).toFixed(2);
@@ -419,13 +427,12 @@
             if(change>=0) { panelChange.innerHTML = `▲ +${change.toFixed(2)} (+${pct}%)`; panelChange.className='change up'; }
             else { panelChange.innerHTML = `▼ ${change.toFixed(2)} (${pct}%)`; panelChange.className='change dn'; }
 
-            // อัปเดตการ์ดสัญญาณอย่างรวดเร็ว
+            // อัปเดตการ์ดสัญญาณ
             const allPrices = [...priceHistory, price];
             const high = Math.max(...allPrices), low = Math.min(...allPrices);
             const fib = calcFibonacci(high, low);
             const analysis = ultraAccurateAnalysis(price, priceHistory, fib, atrValue);
             document.getElementById('systemAccuracy').innerText = analysis.accuracy.toFixed(1);
-            // สัญญาณ M15
             const atrVal = atrValue || price*0.0055;
             const buyEntry = +(price - atrVal*0.4).toFixed(2);
             const buyTP = +(price + atrVal*1.2).toFixed(2);
@@ -445,7 +452,6 @@
             document.getElementById('swingTP').innerText = +(price + atrVal*2.8).toFixed(2);
 
             drawChart();
-            // ตรวจจับจุดเข้าเทรดใหม่ (จากแท่งเทียนล่าสุด)
             detectAndAlertNewEntries(price, fib, analysis);
         } catch(e) {
             console.warn("API error, using fallback");
@@ -460,7 +466,6 @@
         if (!lastCandle || !prevCandle) return;
         let newBuy = false, newSell = false;
         let entryPrice = 0, tpPrice = 0, slPrice = 0;
-        // เงื่อนไขซื้อ: bullish engulfing หรือ bounce ที่ Fib 61.8%
         if (analysis.signal === 'BUY' && lastCandle.close > lastCandle.open && prevCandle.close < prevCandle.open) {
             newBuy = true;
             entryPrice = lastCandle.low;
@@ -473,7 +478,6 @@
             tpPrice = lastCandle.close + (fib.level618 - lastCandle.low)*2;
             slPrice = lastCandle.low - (fib.level618 - lastCandle.low);
         }
-        // ขาย: bearish engulfing หรือ rejection ที่ Fib 23.6%
         if (analysis.signal === 'SELL' && lastCandle.close < lastCandle.open && prevCandle.close > prevCandle.open) {
             newSell = true;
             entryPrice = lastCandle.high;
@@ -486,45 +490,40 @@
             tpPrice = lastCandle.close - (lastCandle.high - fib.level236)*2;
             slPrice = lastCandle.high + (lastCandle.high - fib.level236);
         }
-        // กันแจ้งเตือนซ้ำ (cooldown 30 วินาที)
         if ((newBuy || newSell) && (Date.now() - lastAlertTime > 30000)) {
             lastAlertTime = Date.now();
             if (newBuy) {
                 showNotification('buy', entryPrice.toFixed(2), tpPrice.toFixed(2), slPrice.toFixed(2), 'BUY');
-                blinkCandle(fullCandleData.length-1);
+                blinkCandle();
             } else if (newSell) {
                 showNotification('sell', entryPrice.toFixed(2), tpPrice.toFixed(2), slPrice.toFixed(2), 'SELL');
-                blinkCandle(fullCandleData.length-1);
+                blinkCandle();
             }
         }
     }
 
-    // วาดกราฟ (รองรับ zoom)
+    // วาดกราฟ (ปรับขนาดให้เล็กลง)
     function drawChart() {
         const canvas = document.getElementById('candleCanvas');
         if (!canvas) return;
         const ctx = canvas.getContext('2d');
         const dpr = devicePixelRatio || 1;
-        const W = canvas.offsetWidth, H = 500;
+        const W = canvas.offsetWidth, H = 400;   // ลดความสูง
         canvas.width = W * dpr; canvas.height = H * dpr;
         ctx.scale(dpr, dpr);
 
         if (fullCandleData.length === 0) {
             fullCandleData = generateFullCandles(basePrice, currentTF);
-            displayStart = Math.max(0, fullCandleData.length - displayCount);
         }
-        // ปรับ displayStart ให้อยู่ภายในขอบเขต
-        let endIdx = fullCandleData.length;
-        let startIdx = Math.max(0, endIdx - displayCount);
-        const candlesToShow = fullCandleData.slice(startIdx, endIdx);
+        let startIdx = Math.max(0, fullCandleData.length - displayCount);
+        const candlesToShow = fullCandleData.slice(startIdx, fullCandleData.length);
         if (candlesToShow.length === 0) return;
 
-        // คำนวณราคาสูงสุดต่ำสุด + แนวรับ/ต้าน
-        let allPrices = candlesToShow.flatMap(c => [c.high, c.low]);
         const hist = priceHistory.length ? priceHistory : [basePrice];
         const highRecent = Math.max(...hist, basePrice);
         const lowRecent = Math.min(...hist, basePrice);
         const fib = calcFibonacci(highRecent, lowRecent);
+        let allPrices = candlesToShow.flatMap(c => [c.high, c.low]);
         allPrices.push(fib.level236, fib.level382, fib.level618);
         let minP = Math.min(...allPrices) - 10;
         let maxP = Math.max(...allPrices) + 10;
@@ -534,7 +533,7 @@
         const chartH = H - PAD_T - PAD_B;
         const priceY = p => PAD_T + chartH * (1 - (p - minP) / (maxP - minP));
         const candleX = i => PAD_L + (i + 0.5) * (chartW / candlesToShow.length);
-        const cw = Math.max(2, (chartW / candlesToShow.length) * 0.6);
+        const cw = Math.max(1.5, (chartW / candlesToShow.length) * 0.7);   // ทำให้แท่งเล็กลง
 
         ctx.fillStyle = '#0e0e24';
         ctx.fillRect(0, 0, W, H);
@@ -558,14 +557,14 @@
         drawFiboLine(fib.level382, '#4ECDC4', '38.2%');
         drawFiboLine(fib.level500, '#96CEB4', '50%');
         drawFiboLine(fib.level618, '#45B7D1', '61.8%');
-        // Support/Resistance auto (จาก price history)
+        // Support/Resistance (auto)
         const srLevels = [...new Set([fib.level382, fib.level618, lowRecent, highRecent])];
         srLevels.forEach(level => {
             let y = priceY(level);
             ctx.save(); ctx.setLineDash([4,4]); ctx.strokeStyle = '#00E676'; ctx.beginPath(); ctx.moveTo(PAD_L,y); ctx.lineTo(W-PAD_R,y); ctx.stroke(); ctx.restore();
         });
 
-        // EMA 20,50 (คำนวณจาก candlesToShow)
+        // EMA 20,50
         const closes = candlesToShow.map(c=>c.close);
         const ema20 = (()=>{ let k=2/21, prev=closes.slice(0,20).reduce((a,b)=>a+b,0)/20, arr=[]; for(let i=0;i<20;i++) arr.push(null); arr.push(prev); for(let i=20;i<closes.length;i++){ prev=closes[i]*k+prev*(1-k); arr.push(prev);} return arr; })();
         const ema50 = (()=>{ let k=2/51, prev=closes.slice(0,50).reduce((a,b)=>a+b,0)/50, arr=[]; for(let i=0;i<50;i++) arr.push(null); arr.push(prev); for(let i=50;i<closes.length;i++){ prev=closes[i]*k+prev*(1-k); arr.push(prev);} return arr; })();
@@ -578,7 +577,7 @@
         drawEMA(ema20, '#00B0FF', 'EMA20');
         drawEMA(ema50, '#FFD700', 'EMA50');
 
-        // แท่งเทียน
+        // Candles
         for (let i=0; i<candlesToShow.length; i++) {
             const c = candlesToShow[i];
             const bull = c.close >= c.open;
@@ -586,7 +585,7 @@
             const x = candleX(i);
             const oY = priceY(c.open), cY = priceY(c.close), hY = priceY(c.high), lY = priceY(c.low);
             ctx.strokeStyle = color; ctx.beginPath(); ctx.moveTo(x, hY); ctx.lineTo(x, lY); ctx.stroke();
-            const bodyTop = Math.min(oY,cY), bodyH = Math.max(1.5, Math.abs(oY-cY));
+            const bodyTop = Math.min(oY,cY), bodyH = Math.max(1.2, Math.abs(oY-cY));
             ctx.fillStyle = bull ? 'rgba(0,230,118,0.85)' : 'rgba(255,23,68,0.85)';
             ctx.fillRect(x - cw/2, bodyTop, cw, bodyH);
         }
@@ -626,18 +625,18 @@
 
     // Zoom functions
     function zoomIn() {
-        displayCount = Math.max(20, displayCount - 10);
+        displayCount = Math.max(30, displayCount - 10);
         drawChart();
     }
     function zoomOut() {
-        displayCount = Math.min(200, displayCount + 10);
+        displayCount = Math.min(150, displayCount + 10);
         drawChart();
     }
 
     function setTF(tf) {
         currentTF = tf;
         fullCandleData = generateFullCandles(basePrice, currentTF);
-        displayCount = 60;
+        displayCount = 80;   // เริ่มต้นให้แสดง 80 แท่ง (ทำให้แท่งเล็กลง)
         drawChart();
         document.querySelectorAll('.ctrl-btn').forEach(btn => btn.classList.remove('active'));
         event?.target?.classList?.add('active');

@@ -339,22 +339,22 @@
             <div class="signal-levels">
                 <div class="level-row">
                     <span class="level-label">Zone Entry</span>
-                    <span class="level-val entry-val">3,095 – 3,110</span>
+                    <span class="level-val entry-val" id="swing-entry">กำลังโหลด...</span>
                 </div>
                 <div class="level-row">
                     <span class="level-label">TP1</span>
-                    <span class="level-val tp-val">3,145.00</span>
+                    <span class="level-val tp-val" id="swing-tp1">กำลังโหลด...</span>
                 </div>
                 <div class="level-row">
                     <span class="level-label">TP2</span>
-                    <span class="level-val tp-val">3,175.00</span>
+                    <span class="level-val tp-val" id="swing-tp2">กำลังโหลด...</span>
                 </div>
                 <div class="level-row">
                     <span class="level-label">SL</span>
-                    <span class="level-val sl-val">3,079.00</span>
+                    <span class="level-val sl-val" id="swing-sl">กำลังโหลด...</span>
                 </div>
             </div>
-            <span class="rr-badge">R:R = 1:3.2</span>
+            <span class="rr-badge" id="swing-rr">R:R = ...</span>
         </div>
     </div>
 
@@ -616,33 +616,56 @@ async function fetchGoldPrice() {
 
 // คำนวณ Entry/TP/SL อิงจากราคาจริง
 function calcLevels(price) {
-    const atr = price * 0.0055; // ~0.55% ของราคา ≈ ATR ประมาณการ
+    const atr    = price * 0.0055;  // Intraday ATR ~0.55%
+    const atrD1  = price * 0.013;   // Swing/D1  ATR ~1.3%
     return {
-        // BUY
+        // BUY (Intraday)
         buyEntry : +(price - atr * 0.5).toFixed(2),
         buyTP1   : +(price + atr * 1.0).toFixed(2),
         buyTP2   : +(price + atr * 2.0).toFixed(2),
         buySL    : +(price - atr * 1.2).toFixed(2),
-        // SELL
+        // SELL (Intraday)
         sellEntry: +(price + atr * 0.5).toFixed(2),
         sellTP1  : +(price - atr * 1.0).toFixed(2),
         sellTP2  : +(price - atr * 2.0).toFixed(2),
         sellSL   : +(price + atr * 1.2).toFixed(2),
+        // SWING BUY (D1) — entry zone กว้างขึ้น, TP/SL ใหญ่ขึ้น
+        swingEntryLow : +(price - atrD1 * 1.0).toFixed(2),
+        swingEntryHigh: +(price - atrD1 * 0.3).toFixed(2),
+        swingTP1 : +(price + atrD1 * 1.5).toFixed(2),
+        swingTP2 : +(price + atrD1 * 3.0).toFixed(2),
+        swingSL  : +(price - atrD1 * 1.8).toFixed(2),
     };
 }
 
 function updateSignalCards(price) {
     const L = calcLevels(price);
-    // BUY card
+
+    // ---- BUY card ----
     document.getElementById('buy-entry').textContent = L.buyEntry.toFixed(2);
     document.getElementById('buy-tp1').textContent   = L.buyTP1.toFixed(2);
     document.getElementById('buy-tp2').textContent   = L.buyTP2.toFixed(2);
     document.getElementById('buy-sl').textContent    = L.buySL.toFixed(2);
-    // SELL card
+    const buyRR = ((L.buyTP2 - L.buyEntry) / (L.buyEntry - L.buySL)).toFixed(1);
+    document.querySelector('.card-buy .rr-badge').textContent = `R:R = 1:${buyRR}`;
+
+    // ---- SELL card ----
     document.getElementById('sell-entry').textContent = L.sellEntry.toFixed(2);
     document.getElementById('sell-tp1').textContent   = L.sellTP1.toFixed(2);
     document.getElementById('sell-tp2').textContent   = L.sellTP2.toFixed(2);
     document.getElementById('sell-sl').textContent    = L.sellSL.toFixed(2);
+    const sellRR = ((L.sellEntry - L.sellTP2) / (L.sellSL - L.sellEntry)).toFixed(1);
+    document.querySelector('.card-sell .rr-badge').textContent = `R:R = 1:${sellRR}`;
+
+    // ---- SWING BUY card ----
+    const swingMid = ((L.swingEntryLow + L.swingEntryHigh) / 2);
+    document.getElementById('swing-entry').textContent =
+        L.swingEntryLow.toFixed(2) + ' – ' + L.swingEntryHigh.toFixed(2);
+    document.getElementById('swing-tp1').textContent = L.swingTP1.toFixed(2);
+    document.getElementById('swing-tp2').textContent = L.swingTP2.toFixed(2);
+    document.getElementById('swing-sl').textContent  = L.swingSL.toFixed(2);
+    const swingRR = ((L.swingTP2 - swingMid) / (swingMid - L.swingSL)).toFixed(1);
+    document.getElementById('swing-rr').textContent  = `R:R = 1:${swingRR}`;
 }
 
 // ดึงราคาทุก 10 วินาที

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
-    <title>Gold PRO Signals – 3 Channels | 70%+ Accuracy | Mobile + MT5 Ready</title>
+    <title>Gold PRO Signals – 3 Channels | 70%+ Accuracy | Mobile Ready</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body {
@@ -39,7 +39,7 @@
         .ticker-label { font-size: 0.65rem; color: #aaa; text-transform: uppercase; }
         .ticker-value { font-family: monospace; font-size: 0.9rem; font-weight: bold; }
 
-        /* 3 SQUARES – horizontal row (mobile flex wrap) */
+        /* 3 SQUARES – responsive */
         .signals-squares {
             display: flex;
             flex-wrap: wrap;
@@ -190,7 +190,8 @@
             border: none;
             padding: 2px 8px;
             font-size: 0.6rem;
-            margin-left: 6px;
+            border-radius: 12px;
+            cursor: pointer;
         }
 
         .mt5-button {
@@ -352,7 +353,6 @@
             <span class="history-toggle" id="historyToggle">▼</span>
         </div>
         <div class="history-list" id="historyList">
-            <!--  dynamic history items will be inserted here -->
             <div style="text-align:center; color:#aaa; padding:12px;">ยังไม่มีสัญญาณ</div>
         </div>
     </div>
@@ -410,10 +410,7 @@
     let lastAlertDaily = 0, lastAlertSwing = 0, lastAlertSide = 0;
     const ACCURACY_THRESHOLD = 70;
 
-    // Store signal history (max 10)
     let signalHistory = [];
-
-    // Reference to last signal for MT5 copy (latest overall)
     let lastSignalForCopy = null;
 
     // ========== INDICATORS (same as previous) ==========
@@ -625,21 +622,8 @@
         return { entry: entry.toFixed(2), tp1: tp1.toFixed(2), tp2: tp2.toFixed(2), tp3: tp3.toFixed(2), sl: sl.toFixed(2) };
     }
 
-    // Add to history (max 10)
     function addToHistory(channel, signal, acc, price, levels, timestamp) {
-        const item = {
-            channel,
-            signal,
-            accuracy: acc,
-            price,
-            entry: levels.entry,
-            tp1: levels.tp1,
-            tp2: levels.tp2,
-            tp3: levels.tp3,
-            sl: levels.sl,
-            time: timestamp
-        };
-        signalHistory.unshift(item);
+        signalHistory.unshift({ channel, signal, accuracy: acc, price, entry: levels.entry, tp1: levels.tp1, tp2: levels.tp2, tp3: levels.tp3, sl: levels.sl, time: timestamp });
         if (signalHistory.length > 10) signalHistory.pop();
         updateHistoryUI();
     }
@@ -654,11 +638,10 @@
         let html = '';
         for (let idx = 0; idx < signalHistory.length; idx++) {
             const s = signalHistory[idx];
-            const signalType = s.signal === 'BUY' ? 'ซื้อ' : 'ขาย';
             const itemClass = s.signal === 'BUY' ? 'buy' : 'sell';
             html += `
                 <div class="history-item ${itemClass}">
-                    <div class="history-time">⏱️ ${s.time} | ${s.channel} | ${signalType} (Acc ${s.accuracy.toFixed(1)}%)</div>
+                    <div class="history-time">⏱️ ${s.time} | ${s.channel} | ${s.signal === 'BUY' ? 'ซื้อ' : 'ขาย'} (Acc ${s.accuracy.toFixed(1)}%)</div>
                     <div class="history-details">
                         <span>📌 Entry: ${s.entry}</span>
                         <span>🎯 TP1: ${s.tp1}</span>
@@ -671,16 +654,13 @@
             `;
         }
         container.innerHTML = html;
-        // attach copy events
         document.querySelectorAll('.copy-history-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 const idx = parseInt(btn.getAttribute('data-idx'), 10);
                 const s = signalHistory[idx];
                 if (s) {
                     const text = `[GOLD PRO SIGNAL] ${s.channel} ${s.signal === 'BUY' ? 'BUY' : 'SELL'} | Acc ${s.accuracy.toFixed(1)}% | Entry ${s.entry} | TP1 ${s.tp1} TP2 ${s.tp2} TP3 ${s.tp3} | SL ${s.sl}`;
-                    navigator.clipboard.writeText(text).then(() => {
-                        alert("✅ คัดลอกสัญญาณสำเร็จ! วางใน MT5 หรือแอปเทรด");
-                    }).catch(() => alert("กดปุ่มคัดลอกแล้ว (ถ้าไม่ได้ให้คัดลอกเอง)"));
+                    navigator.clipboard.writeText(text).then(() => alert("✅ คัดลอกสัญญาณสำเร็จ! วางใน MT5 หรือแอปเทรด")).catch(() => alert("กดปุ่มคัดลอกแล้ว (ถ้าไม่ได้ให้คัดลอกเอง)"));
                 }
             });
         });
@@ -711,7 +691,6 @@
             <button id="closePopupBtn" style="margin-top:12px; background:#2a2e45; border:none; padding:4px 12px; border-radius:20px; cursor:pointer;">ปิด</button>
         `;
         const notif = document.createElement('div');
-        notif.id = 'dynamicPopup';
         notif.style.position = 'fixed';
         notif.style.top = '50%';
         notif.style.left = '50%';
@@ -731,7 +710,6 @@
         document.body.appendChild(notif);
         const closeBtn = notif.querySelector('#closePopupBtn');
         closeBtn.addEventListener('click', () => notif.remove());
-        // auto remove after 1 minute
         setTimeout(() => { if (notif && notif.remove) notif.remove(); }, 60000);
         playBeep();
     }
@@ -784,7 +762,6 @@
     }
 
     function updateAllChannels() {
-        // Daily
         let dailyCandles = generateCandlesForTF('D1', 30, basePrice);
         let bbDaily = calcBollinger(dailyCandles, 20, 2);
         let lastDailyBB = { upper: bbDaily.upper[bbDaily.upper.length-1], lower: bbDaily.lower[bbDaily.lower.length-1], middle: bbDaily.middle[bbDaily.middle.length-1] };
@@ -793,7 +770,6 @@
         let dailyLevels = calcExtendedLevels(basePrice, atrValue, dailyAnalysis.signal === 'BUY');
         updateSquareUI('daily', dailyAnalysis, dailyLevels);
 
-        // Swing
         let swingCandles = generateCandlesForTF('H1', 50, basePrice);
         let bbSwing = calcBollinger(swingCandles, 20, 2);
         let lastSwingBB = { upper: bbSwing.upper[bbSwing.upper.length-1], lower: bbSwing.lower[bbSwing.lower.length-1], middle: bbSwing.middle[bbSwing.middle.length-1] };
@@ -802,7 +778,6 @@
         let swingLevels = calcExtendedLevels(basePrice, atrValue, swingAnalysis.signal === 'BUY');
         updateSquareUI('swing', swingAnalysis, swingLevels);
 
-        // Sideways
         let sideCandles = generateCandlesForTF('M15', 60, basePrice);
         let bbSide = calcBollinger(sideCandles, 20, 2);
         let lastSideBB = { upper: bbSide.upper[bbSide.upper.length-1], lower: bbSide.lower[bbSide.lower.length-1], middle: bbSide.middle[bbSide.middle.length-1] };
@@ -811,7 +786,6 @@
         let sideLevels = calcExtendedLevels(basePrice, atrValue, sideAnalysis.signal === 'BUY');
         updateSquareUI('side', sideAnalysis, sideLevels);
 
-        // Determine best signal for MT5 copy (latest overall)
         let bestSignal = null;
         if (dailyAnalysis.accuracy >= ACCURACY_THRESHOLD && dailyAnalysis.signal !== 'NEUTRAL') bestSignal = { channel: 'Daily', ...dailyAnalysis, levels: dailyLevels };
         if (swingAnalysis.accuracy >= ACCURACY_THRESHOLD && swingAnalysis.signal !== 'NEUTRAL' && (!bestSignal || swingAnalysis.accuracy > bestSignal.accuracy)) bestSignal = { channel: 'Swing', ...swingAnalysis, levels: swingLevels };
@@ -826,7 +800,6 @@
         let maxAcc = Math.max(dailyAnalysis.accuracy, swingAnalysis.accuracy, sideAnalysis.accuracy);
         document.getElementById('sysAcc').innerText = maxAcc.toFixed(1);
 
-        // Alert for each channel (prevent duplicate for same channel within 30s)
         const now = Date.now();
         if (dailyAnalysis.accuracy >= ACCURACY_THRESHOLD && dailyAnalysis.signal !== 'NEUTRAL' && now - lastAlertDaily > 30000) {
             lastAlertDaily = now;
@@ -845,7 +818,6 @@
         }
     }
 
-    // Draw chart (unchanged but we keep it)
     function drawChart() {
         let canvas = document.getElementById('candleCanvas');
         if (!canvas) return;
@@ -871,7 +843,6 @@
         let cw = Math.max(2.5, (chartW/count)*0.7);
         ctx.fillStyle = '#090c17';
         ctx.fillRect(0,0,W,H);
-        // 1‑point grid
         let oneStart = Math.floor(minP), oneEnd = Math.ceil(maxP);
         ctx.save(); ctx.strokeStyle = '#3a4268'; ctx.lineWidth = 0.5; ctx.setLineDash([3,4]);
         for (let level = oneStart; level <= oneEnd; level++) {
@@ -1016,12 +987,9 @@
         }
         let s = lastSignalForCopy;
         let text = `[GOLD PRO SIGNAL] ${s.channel} ${s.signal === 'BUY' ? 'BUY' : 'SELL'} | Accuracy ${s.accuracy.toFixed(1)}% | Entry ${s.levels.entry} | TP1 ${s.levels.tp1} TP2 ${s.levels.tp2} TP3 ${s.levels.tp3} | SL ${s.levels.sl}`;
-        navigator.clipboard.writeText(text).then(() => {
-            alert("✅ คัดลอกสัญญาณสำเร็จ! วางใน MT5 หรือแอปเทรด");
-        }).catch(() => alert("กดปุ่มคัดลอกแล้ว (ถ้าไม่ได้ให้คัดลอกเอง)"));
+        navigator.clipboard.writeText(text).then(() => alert("✅ คัดลอกสัญญาณสำเร็จ! วางใน MT5 หรือแอปเทรด")).catch(() => alert("กดปุ่มคัดลอกแล้ว (ถ้าไม่ได้ให้คัดลอกเอง)"));
     }
 
-    // Toggle history panel
     const historyHeader = document.getElementById('historyHeader');
     const historyList = document.getElementById('historyList');
     const historyToggle = document.getElementById('historyToggle');
